@@ -1,7 +1,7 @@
 // src/app/cafes/[id]/page.tsx
 
-import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
-import { cookies } from "next/headers";
+import { createClientSupabase } from "@/utils/supabase/client";
+
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import { Star } from "lucide-react";
@@ -9,14 +9,15 @@ import { Star } from "lucide-react";
 export default async function CafeDetailPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
-  const supabase = createServerComponentClient({ cookies });
+  const supabase = createClientSupabase();
+  const { id } = await params; // Await the params promise
 
   const { data: cafe, error } = await supabase
     .from("cafes")
     .select("*")
-    .eq("id", params.id)
+    .eq("id", id)
     .single();
 
   if (!cafe || error) return notFound();

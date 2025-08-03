@@ -13,7 +13,7 @@ const karla = Karla({
 });
 
 export const metadata: Metadata = {
-  title: "Cafe Rating",
+  title: "RateMyCafe",
   icons: {
     icon: "/logo.png",
   },

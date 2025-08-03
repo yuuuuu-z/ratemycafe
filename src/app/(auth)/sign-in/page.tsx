@@ -35,6 +35,7 @@ export default function Page() {
     await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
+        redirectTo: "https://ratemycafe.vercel.app",
         queryParams: {
           prompt: "select_account",
         },

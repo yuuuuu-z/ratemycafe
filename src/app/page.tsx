@@ -21,8 +21,8 @@ export default function Page() {
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const toastShown = useRef(false);
+  console.log(userData);
 
-  // const items = [
   //   {
   //     title: "Rate Cafes",
   //     description: "Discover and rate your favorite coffee shops",
@@ -73,39 +73,38 @@ export default function Page() {
   //   },
   // ];
 
-  const fetchUserData = async () => {
-    const {
-      data: { session },
-    } = await supabase.auth.getSession();
-
-    if (!session?.user) {
-      setUserData(null);
-      setError("You are not signed in.");
-      setIsLoading(false);
-      return;
-    }
-
-    const { data, error: userError } = await supabase
-      .from("users")
-      .select("*")
-      .eq("id", session.user.id)
-      .single();
-
-    if (userError) {
-      setError(userError.message);
-      setUserData(null);
-    } else {
-      setUserData(data);
-      setError(null);
-    }
-
-    // Add minimum loading time
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 1000); // Show skeleton for at least 1.5 seconds
-  };
-
   useEffect(() => {
+    const fetchUserData = async () => {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
+      if (!session?.user) {
+        setUserData(null);
+        setError("You are not signed in.");
+        setIsLoading(false);
+        return;
+      }
+
+      const { data, error: userError } = await supabase
+        .from("users")
+        .select("*")
+        .eq("id", session.user.id)
+        .single();
+
+      if (userError) {
+        setError(userError.message);
+        setUserData(null);
+      } else {
+        setUserData(data);
+        setError(null);
+      }
+
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 1000);
+    };
+
     // Check sessionStorage for toast flag
     const alreadyWelcomed = sessionStorage.getItem("welcome-toast");
     if (alreadyWelcomed) {
@@ -144,7 +143,7 @@ export default function Page() {
     return () => {
       listener.subscription.unsubscribe();
     };
-  }, []);
+  }, [supabase.auth, supabase]);
 
   if (error) return <p className="text-red-500">⚠️ {error}</p>;
   if (isLoading)
