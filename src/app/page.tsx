@@ -23,56 +23,6 @@ export default function Page() {
   const toastShown = useRef(false);
   console.log(userData);
 
-  //   {
-  //     title: "Rate Cafes",
-  //     description: "Discover and rate your favorite coffee shops",
-  //     link: "/rate",
-  //     image:
-  //       "https://upload.wikimedia.org/wikipedia/en/thumb/d/d3/Starbucks_Corporation_Logo_2011.svg/1200px-Starbucks_Corporation_Logo_2011.svg.png",
-  //     review: 0,
-  //   },
-  //   {
-  //     title: "Find Cafes",
-  //     description: "Explore cafes near you with ratings and reviews",
-  //     link: "/explore",
-  //     image:
-  //       "https://upload.wikimedia.org/wikipedia/en/thumb/d/d3/Starbucks_Corporation_Logo_2011.svg/1200px-Starbucks_Corporation_Logo_2011.svg.png",
-  //     review: 0,
-  //   },
-  //   {
-  //     title: "My Reviews",
-  //     description: "View and manage your cafe reviews",
-  //     link: "/reviews",
-  //     image:
-  //       "https://upload.wikimedia.org/wikipedia/en/thumb/d/d3/Starbucks_Corporation_Logo_2011.svg/1200px-Starbucks_Corporation_Logo_2011.svg.png",
-  //     review: 0,
-  //   },
-  //   {
-  //     title: "My Reviews",
-  //     description: "View and manage your cafe reviews",
-  //     link: "/reviews",
-  //     image:
-  //       "https://upload.wikimedia.org/wikipedia/en/thumb/d/d3/Starbucks_Corporation_Logo_2011.svg/1200px-Starbucks_Corporation_Logo_2011.svg.png",
-  //     review: 0,
-  //   },
-  //   {
-  //     title: "My Reviews",
-  //     description: "View and manage your cafe reviews",
-  //     link: "/reviews",
-  //     image:
-  //       "https://upload.wikimedia.org/wikipedia/en/thumb/d/d3/Starbucks_Corporation_Logo_2011.svg/1200px-Starbucks_Corporation_Logo_2011.svg.png",
-  //     review: 0,
-  //   },
-  //   {
-  //     title: "My Reviews",
-  //     description: "View and manage your cafe reviews",
-  //     link: "/reviews",
-  //     image:
-  //       "https://upload.wikimedia.org/wikipedia/en/thumb/d/d3/Starbucks_Corporation_Logo_2011.svg/1200px-Starbucks_Corporation_Logo_2011.svg.png",
-  //     review: 0,
-  //   },
-  // ];
-
   useEffect(() => {
     const fetchUserData = async () => {
       const {
@@ -90,7 +40,7 @@ export default function Page() {
         .from("users")
         .select("*")
         .eq("id", session.user.id)
-        .single();
+        .single<UserData>();
 
       if (userError) {
         setError(userError.message);
@@ -98,37 +48,30 @@ export default function Page() {
       } else {
         setUserData(data);
         setError(null);
-      }
 
-      setTimeout(() => {
-        setIsLoading(false);
-      }, 1000);
-    };
-
-    // Check sessionStorage for toast flag
-    const alreadyWelcomed = sessionStorage.getItem("welcome-toast");
-    if (alreadyWelcomed) {
-      toastShown.current = true;
-    }
-
-    // Initial user fetch and toast if needed
-    fetchUserData().then(() => {
-      if (!toastShown.current) {
-        toast.success("Signed in successfully!");
-        toastShown.current = true;
-        sessionStorage.setItem("welcome-toast", "shown");
-      }
-    });
-
-    // Listen to auth changes
-    const { data: listener } = supabase.auth.onAuthStateChange((event) => {
-      if (event === "SIGNED_IN") {
-        setIsLoading(true);
-        if (!toastShown.current) {
+        // Only show the success toast if we have valid user data and haven't shown it yet
+        const alreadyWelcomed = sessionStorage.getItem("welcome-toast");
+        if (!toastShown.current && !alreadyWelcomed) {
           toast.success("Signed in successfully!");
           toastShown.current = true;
           sessionStorage.setItem("welcome-toast", "shown");
         }
+      }
+
+      setIsLoading(false);
+    };
+
+    // Check sessionStorage for toast flag
+    if (sessionStorage.getItem("welcome-toast")) {
+      toastShown.current = true;
+    }
+
+    fetchUserData();
+
+    // Auth state listener
+    const { data: listener } = supabase.auth.onAuthStateChange((event) => {
+      if (event === "SIGNED_IN") {
+        setIsLoading(true);
         fetchUserData();
       } else if (event === "SIGNED_OUT") {
         toast.info("Signed out");
@@ -143,9 +86,10 @@ export default function Page() {
     return () => {
       listener.subscription.unsubscribe();
     };
-  }, [supabase.auth, supabase]);
+  }, [supabase]);
 
   if (error) return <p className="text-red-500">⚠️ {error}</p>;
+
   if (isLoading)
     return (
       <div className="space-y-4">
@@ -168,8 +112,6 @@ export default function Page() {
   return (
     <div>
       {/* <p>✅ Welcome {userData?.full_name || userData?.email}</p> */}
-
-      {/* <HoverEffect items={items} /> */}
       <Cafes />
     </div>
   );
