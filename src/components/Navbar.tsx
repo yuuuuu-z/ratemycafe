@@ -4,9 +4,9 @@ import React, { useEffect, useState } from "react";
 import { Button } from "./ui/button";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import Image from "next/image";
 import { createClientSupabase } from "@/utils/supabase/client";
 import { toast } from "sonner";
+import Logo from "./Logo";
 
 export default function Navbar() {
   const supabase = createClientSupabase();
@@ -43,10 +43,9 @@ export default function Navbar() {
   };
 
   return (
-    <div className="flex items-center justify-between">
+    <div className="flex items-center justify-between py-5">
       <Link className="flex items-center" href="/">
-        <Image src={"/logo.png"} alt="logo" width={70} height={70} />
-        <p className="md:text-2xl text-lg font-bold">RateMyCafe</p>
+        <Logo />
       </Link>
 
       {/* Conditionally render Sign In or Sign Out */}
