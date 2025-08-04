@@ -4,9 +4,10 @@ export default function page() {
   return (
     <div className="container mx-auto py-12 px-4 md:px-8">
       <div className="bg-gray-100 p-6 rounded-lg mb-8 text-sm text-gray-700">
-        <strong>Disclaimer:</strong> This is for illustrative purposes only and
-        is NOT legal advice. You must consult with a legal professional to draft
-        a proper, legally binding document for your project.
+        <strong className="text-red-500">Disclaimer:</strong> This is for
+        illustrative purposes only and is NOT legal advice. You must consult
+        with a legal professional to draft a proper, legally binding document
+        for your project.
       </div>
 
       <h1 className="text-4xl font-bold mb-4">Terms & Conditions</h1>
