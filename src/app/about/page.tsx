@@ -122,8 +122,8 @@ export default function page() {
           </li>
           <li className="mb-4">
             <strong>Expand our coverage:</strong> Your donation will help us
-            expand our reach and cover even more universities, ensuring that
-            more students have access to accurate and reliable information.
+            expand our reach and cover even more cofffe shop, ensuring that more
+            user have access to accurate and reliable information.
           </li>
           <li className="mb-4">
             <strong>Improve our platform:</strong> Your donation will allow us

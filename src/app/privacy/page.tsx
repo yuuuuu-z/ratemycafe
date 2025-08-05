@@ -4,7 +4,7 @@ export default function page() {
   return (
     <div className="container mx-auto py-12 px-4 md:px-8">
       <div
-        className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-8"
+        className=" border-l-4 bg-yellow-300 border-yellow-500 text-yellow-700 p-4 mb-8"
         role="alert"
       >
         <p className="font-bold">Disclaimer</p>
@@ -15,17 +15,15 @@ export default function page() {
         </p>
       </div>
 
-      <h1 className="text-4xl sm:text-5xl font-extrabold text-gray-900 mb-6">
+      <h1 className="text-4xl sm:text-5xl font-extrabold  mb-6">
         Privacy Policy
       </h1>
-      <p className="text-gray-600 mb-8 text-sm">Last updated: August 4, 2025</p>
+      <p className=" mb-8 text-sm">Last updated: August 4, 2025</p>
 
       <div className="space-y-8">
         <div>
-          <h2 className="text-2xl font-bold text-gray-800 mb-3">
-            1. Introduction
-          </h2>
-          <p className="text-gray-700 leading-relaxed">
+          <h2 className="text-2xl font-bold  mb-3">1. Introduction</h2>
+          <p className=" leading-relaxed">
             Your privacy is important to us. This Privacy Policy explains how
             CafeRater collects, uses, and protects your personal information
             when you use our Service.
@@ -33,10 +31,10 @@ export default function page() {
         </div>
 
         <div>
-          <h2 className="text-2xl font-bold text-gray-800 mb-3">
+          <h2 className="text-2xl font-bold  mb-3">
             2. Information We Collect
           </h2>
-          <ul className="list-disc list-inside text-gray-700 leading-relaxed space-y-2">
+          <ul className="list-disc list-inside  leading-relaxed space-y-2">
             <li>
               <strong>Account Information:</strong> When you create an account,
               we collect your email address and a secure, hashed password, which
@@ -61,13 +59,13 @@ export default function page() {
         </div>
 
         <div>
-          <h2 className="text-2xl font-bold text-gray-800 mb-3">
+          <h2 className="text-2xl font-bold  mb-3">
             3. How We Use Your Information
           </h2>
-          <p className="text-gray-700 leading-relaxed mb-2">
+          <p className=" leading-relaxed mb-2">
             We use the information we collect to:
           </p>
-          <ul className="list-disc list-inside text-gray-700 leading-relaxed space-y-2">
+          <ul className="list-disc list-inside  leading-relaxed space-y-2">
             <li>Provide and operate the CafeRater Service.</li>
             <li>Display your reviews and ratings on the platform.</li>
             <li>
@@ -79,10 +77,8 @@ export default function page() {
         </div>
 
         <div>
-          <h2 className="text-2xl font-bold text-gray-800 mb-3">
-            4. Data Security
-          </h2>
-          <p className="text-gray-700 leading-relaxed">
+          <h2 className="text-2xl font-bold  mb-3">4. Data Security</h2>
+          <p className="leading-relaxed">
             We take reasonable measures to protect your personal information
             from unauthorized access, loss, or disclosure. However, no method of
             transmission over the internet or method of electronic storage is
@@ -91,10 +87,8 @@ export default function page() {
         </div>
 
         <div>
-          <h2 className="text-2xl font-bold text-gray-800 mb-3">
-            5. Your Rights
-          </h2>
-          <p className="text-gray-700 leading-relaxed">
+          <h2 className="text-2xl font-bold  mb-3">5. Your Rights</h2>
+          <p className=" leading-relaxed">
             You have the right to access, correct, or delete your personal
             information and content. You can do this by managing your account
             settings or by contacting us directly.
@@ -102,10 +96,10 @@ export default function page() {
         </div>
 
         <div>
-          <h2 className="text-2xl font-bold text-gray-800 mb-3">
+          <h2 className="text-2xl font-bold  mb-3">
             6. Changes to this Policy
           </h2>
-          <p className="text-gray-700 leading-relaxed">
+          <p className=" leading-relaxed">
             We may update this Privacy Policy from time to time. We will notify
             you of any changes by posting the new policy on this page.
           </p>

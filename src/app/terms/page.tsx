@@ -11,7 +11,7 @@ export default function page() {
       </div>
 
       <h1 className="text-4xl font-bold mb-4">Terms & Conditions</h1>
-      <p className="text-gray-600 mb-8">Last updated: August 4, 2025</p>
+      <p className=" mb-8">Last updated: August 4, 2025</p>
 
       <h2 className="text-2xl font-semibold mb-3">1. Introduction</h2>
       <p className="mb-4">
