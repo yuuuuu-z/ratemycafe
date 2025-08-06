@@ -51,7 +51,7 @@ export default function Navbar() {
       {/* Conditionally render Sign In or Sign Out */}
       {pathname !== "/sign-in" &&
         (isLoggedIn ? (
-          <Button className="bg-red-500" onClick={handleSignOut}>
+          <Button className="bg-red-500 text-white" onClick={handleSignOut}>
             Sign Out
           </Button>
         ) : (

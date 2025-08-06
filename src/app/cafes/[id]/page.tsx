@@ -4,7 +4,9 @@ import { createClientSupabase } from "@/utils/supabase/client";
 
 import { notFound } from "next/navigation";
 import Image from "next/image";
-import { Star } from "lucide-react";
+import { BadgeCheckIcon, MapPinned, Star } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { ImageSlider } from "@/components/ImageSlider";
 
 export default async function CafeDetailPage({
   params,
@@ -37,10 +39,24 @@ export default async function CafeDetailPage({
         </div>
 
         {/* Text Content */}
-        <div>
-          <h1 className="text-4xl font-bold">{cafe.name}</h1>
-          <p className="text-lg mt-2">{cafe.location}</p>
-          <p className="mt-4 text-lg max-w-3xl">{cafe.description}</p>
+        <div className="flex flex-col ">
+          <div>
+            <div className="text-4xl font-bold flex items-center gap-2 ">
+              {cafe.name}{" "}
+              <Badge className="bg-blue-500 text-white dark:bg-blue-600">
+                <BadgeCheckIcon />
+                Verified
+              </Badge>
+            </div>
+            <div className="text-lg mt-2 flex items-center gap-2">
+              <MapPinned size={15} color="green" /> {cafe.location}
+            </div>
+            <p className="mt-4 text-lg max-w-3xl">{cafe.description}</p>
+          </div>
+
+          <div>
+            <ImageSlider />
+          </div>
         </div>
       </div>
 

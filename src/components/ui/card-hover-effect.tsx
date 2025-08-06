@@ -4,7 +4,8 @@ import Image from "next/image";
 
 import { useState } from "react";
 import { Button } from "./button";
-import { Star } from "lucide-react";
+import { BadgeCheckIcon, Star } from "lucide-react";
+import { Badge } from "./badge";
 
 export const HoverEffect = ({
   items,
@@ -64,7 +65,18 @@ export const HoverEffect = ({
               />
             </div>
             <div className="flex-col h-[100px] ">
-              <CardTitle>{item.title}</CardTitle>
+              <CardTitle>
+                <span className="md:text-[1.4rem] text-[1.1rem] font-bold pr-3">
+                  {item.title}
+                </span>
+                <Badge
+                  variant="secondary"
+                  className="bg-blue-500 text-white dark:bg-blue-600"
+                >
+                  <BadgeCheckIcon />
+                  Verified
+                </Badge>{" "}
+              </CardTitle>
               <CardDescription>
                 {item.description.length > 100 ? (
                   <>

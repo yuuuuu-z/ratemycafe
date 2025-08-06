@@ -59,6 +59,29 @@ export default function page() {
             </li>
           </ul>
         </div>
+        <div className="mt-12 max-w-2xl mx-auto">
+          <h2 className="text-3xl font-semibold mb-3">
+            Why Are We Creating This System?
+          </h2>
+          <p className=" leading-relaxed mb-4">
+            Many people love spending time in cafes for different reasons — to
+            relax, catch up with friends, or work remotely. However:
+          </p>
+          <ul className="list-disc list-inside leading-relaxed space-y-2">
+            <li>
+              Reviews are often general and not specific to things like work
+              environment or vibe.
+            </li>
+            <li>
+              It’s hard to find cafes tailored to personal preferences (e.g.,
+              best productivity spot).
+            </li>
+            <li>
+              Platforms like Google Maps/Yelp are not focused on the _cafe
+              experience.
+            </li>
+          </ul>
+        </div>
 
         {/* This section was already centered */}
         <div className=" mt-12 max-w-2xl mx-auto">
@@ -77,7 +100,7 @@ export default function page() {
 
       {/* Founders Section */}
       <section className="mb-16">
-        <h2 className="text-3xl font-semibold mb-8 text-center">Founders</h2>
+        <h2 className="text-3xl font-semibold mb-8 text-center">Founder</h2>
         <div className="flex justify-center gap-8">
           {/* Sokheng Chen */}
           <div className=" border-2 rounded-2xl shadow-md p-6 w-80">

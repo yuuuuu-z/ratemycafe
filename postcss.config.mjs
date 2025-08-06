@@ -1,6 +1,6 @@
 const config = {
   plugins: ["@tailwindcss/postcss"],
-  // class: "dark",
+  class: "dark",
 };
 
 export default config;
