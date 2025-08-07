@@ -29,11 +29,12 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={`${karla.className} antialiased`}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <main className="max-w-6xl mx-auto min-h-screen px-5 flex flex-col">
+          <main className="max-w-6xl mx-auto min-h-screen px-5 flex flex-col px-">
             <NextTopLoader showSpinner={false} color="black" />
             <Navbar />
             {children}
             <Footer />
+
             <Toaster richColors />
           </main>
         </ThemeProvider>

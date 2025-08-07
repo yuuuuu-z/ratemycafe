@@ -41,9 +41,9 @@ export default async function CafeDetailPage({
         {/* Text Content */}
         <div className="flex flex-col ">
           <div>
-            <div className="text-4xl font-bold flex items-center gap-2 ">
+            <div className="text-4xl font-bold flex items-center gap-2   ">
               {cafe.name}{" "}
-              <Badge className="bg-blue-500 text-white dark:bg-blue-600">
+              <Badge className="bg-blue-500 text-white dark:bg-blue-600 mt-2">
                 <BadgeCheckIcon />
                 Verified
               </Badge>
@@ -55,7 +55,7 @@ export default async function CafeDetailPage({
           </div>
 
           <div>
-            <ImageSlider />
+            <ImageSlider cafeId={id} />
           </div>
         </div>
       </div>
@@ -79,21 +79,27 @@ export default async function CafeDetailPage({
 
           {/* Rating Legend */}
           <div className="flex flex-col gap-3 text-base mt-2 md:mt-0">
-            <div className="flex items-center gap-2">
-              <Star className="text-green-600 w-5 h-5" /> 5 Excellent
-            </div>
-            <div className="flex items-center gap-2">
-              <Star className="text-green-400 w-5 h-5" /> 4 Good
-            </div>
-            <div className="flex items-center gap-2">
-              <Star className="text-yellow-500 w-5 h-5" /> 3 Average
-            </div>
-            <div className="flex items-center gap-2">
-              <Star className="text-orange-500 w-5 h-5" /> 2 Below Average
-            </div>
-            <div className="flex items-center gap-2">
-              <Star className="text-red-500 w-5 h-5" /> 1 Poor
-            </div>
+            {[5, 4, 3, 2, 1].map((rating) => (
+              <div key={rating} className="flex items-center gap-2">
+                <Star
+                  className={
+                    [
+                      "text-green-600",
+                      "text-green-400",
+                      "text-yellow-500",
+                      "text-orange-500",
+                      "text-red-500",
+                    ][5 - rating]
+                  }
+                />
+                {rating}{" "}
+                {
+                  ["Excellent", "Good", "Average", "Below Average", "Poor"][
+                    5 - rating
+                  ]
+                }
+              </div>
+            ))}
           </div>
         </div>
       </div>

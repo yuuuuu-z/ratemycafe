@@ -13,6 +13,21 @@ const nextConfig: NextConfig = {
         hostname: "images.unsplash.com",
         pathname: "/**",
       },
+      {
+        protocol: "https",
+        hostname: "ktzkxcohwybsvdtjsnby.supabase.co",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "qiniu.cambojob.com",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "encrypted-tbn0.gstatic.com",
+        pathname: "/**",
+      },
     ],
   },
 };

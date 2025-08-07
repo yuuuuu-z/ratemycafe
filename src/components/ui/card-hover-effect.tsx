@@ -66,7 +66,7 @@ export const HoverEffect = ({
             </div>
             <div className="flex-col h-[100px] ">
               <CardTitle>
-                <span className="md:text-[1.4rem] text-[1.1rem] font-bold pr-3">
+                <span className="md:text-[1.4rem] text-[1.2rem] font-bold pr-3">
                   {item.title}
                 </span>
                 <Badge
