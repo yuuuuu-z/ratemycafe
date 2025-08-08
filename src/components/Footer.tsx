@@ -50,12 +50,12 @@ export default function Footer() {
         </div>
       </div>
 
-      <div className="flex flex-col p-3 space-y-6 md:flex-row md:justify-between md:items-center ">
+      <div className="flex flex-col  p-3 space-y-6 md:flex-row md:justify-between md:items-center ">
         <p className="font-bold pt-7">All rights reserved © Sopheaktra</p>
         <Button
           variant="ghost"
           onClick={() => setTheme(isDark ? "light" : "dark")}
-          className="flex items-center gap-2 mt-1 text-sm "
+          className="flex items-center gap-2 mt-1 text-sm w-[120px] "
         >
           {isDark ? <Sun size={18} /> : <Moon size={18} />}
           {isDark ? "Light Mode" : "Dark Mode"}

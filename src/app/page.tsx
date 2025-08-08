@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
 import Cafes from "./cafes/page";
 import { ThreeDMarqueeDemo } from "@/components/ThreeDMarqueeDemo";
+import Image from "next/image";
 
 interface UserData {
   id: string;
@@ -22,7 +23,6 @@ export default function Page() {
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const toastShown = useRef(false);
-  console.log(userData);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -37,6 +37,7 @@ export default function Page() {
         return;
       }
 
+      // Fetch from users table
       const { data, error: userError } = await supabase
         .from("users")
         .select("*")
@@ -47,10 +48,28 @@ export default function Page() {
         setError(userError.message);
         setUserData(null);
       } else {
-        setUserData(data);
+        let finalImage = data.image || "";
+
+        // 1️⃣ If image is missing in DB, fallback to Google/OAuth avatar
+        if (!finalImage && session.user.user_metadata?.avatar_url) {
+          finalImage = session.user.user_metadata.avatar_url;
+        }
+
+        // 2️⃣ If it's from Supabase Storage and not a full URL, make it public
+        if (finalImage && !finalImage.startsWith("http")) {
+          const { data: publicData } = supabase.storage
+            .from("avatars") // your bucket name
+            .getPublicUrl(finalImage);
+
+          if (publicData?.publicUrl) {
+            finalImage = publicData.publicUrl;
+          }
+        }
+
+        setUserData({ ...data, image: finalImage });
         setError(null);
 
-        // Only show the success toast if we have valid user data and haven't shown it yet
+        // Welcome toast
         const alreadyWelcomed = sessionStorage.getItem("welcome-toast");
         if (!toastShown.current && !alreadyWelcomed) {
           toast.success("Signed in successfully!");
@@ -62,7 +81,7 @@ export default function Page() {
       setIsLoading(false);
     };
 
-    // Check sessionStorage for toast flag
+    // Restore toast flag
     if (sessionStorage.getItem("welcome-toast")) {
       toastShown.current = true;
     }
@@ -91,9 +110,9 @@ export default function Page() {
 
   if (error)
     return (
-      <p>
+      <span>
         <ThreeDMarqueeDemo />
-      </p>
+      </span>
     );
 
   if (isLoading)
@@ -117,7 +136,22 @@ export default function Page() {
 
   return (
     <div>
-      {/* <p>✅ Welcome {userData?.full_name || userData?.email}</p> */}
+      {userData && (
+        <div className="flex items-center gap-2 bg-green-50 px-3 py-2 rounded-lg border border-green-200 max-w-max">
+          {userData.image && (
+            <Image
+              src={userData.image}
+              alt="Avatar"
+              width={24}
+              height={24}
+              className="h-6 w-6 rounded-full"
+            />
+          )}
+          <span className="text-sm text-green-700 font-medium">
+            Welcome, {userData.full_name} 🚀
+          </span>
+        </div>
+      )}
       <ThreeDMarqueeDemo />
       <Cafes />
     </div>
