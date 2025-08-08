@@ -6,6 +6,7 @@ import { toast } from "sonner";
 
 import { Skeleton } from "@/components/ui/skeleton";
 import Cafes from "./cafes/page";
+import { ThreeDMarqueeDemo } from "@/components/ThreeDMarqueeDemo";
 
 interface UserData {
   id: string;
@@ -88,7 +89,12 @@ export default function Page() {
     };
   }, [supabase]);
 
-  if (error) return <p className="text-red-500">⚠️ {error}</p>;
+  if (error)
+    return (
+      <p>
+        <ThreeDMarqueeDemo />
+      </p>
+    );
 
   if (isLoading)
     return (
@@ -112,6 +118,7 @@ export default function Page() {
   return (
     <div>
       {/* <p>✅ Welcome {userData?.full_name || userData?.email}</p> */}
+      <ThreeDMarqueeDemo />
       <Cafes />
     </div>
   );
