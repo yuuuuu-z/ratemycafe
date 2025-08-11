@@ -32,13 +32,10 @@ export default function RootLayout({
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <main className="max-w-6xl mx-auto min-h-screen px-5 flex flex-col">
             <NextTopLoader showSpinner={false} color="black" />
-
-            <PageTransition>
-              <Navbar />
-              {children}
-              <Footer />
-              <Toaster richColors />
-            </PageTransition>
+            <Navbar />
+            <PageTransition>{children}</PageTransition>
+            <Footer />
+            <Toaster richColors />
           </main>
         </ThemeProvider>
       </body>

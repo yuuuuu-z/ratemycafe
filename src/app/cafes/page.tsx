@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { createClientSupabase } from "@/utils/supabase/client";
 import { HoverEffect } from "@/components/ui/card-hover-effect";
 
+
 interface Cafe {
   id: string;
   name: string;
@@ -34,9 +35,9 @@ export default function CafesPage() {
     id: cafe.id,
     title: cafe.name,
     description: cafe.description,
-    link: `/cafes/${cafe.id}`, // future detail page
+    link: `/cafes/${cafe.id}`,
     image: cafe.image_url,
-    review: 0, // static for now
+    review: 0,
   }));
 
   return (

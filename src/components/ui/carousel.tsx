@@ -92,17 +92,15 @@ const Slide = ({ slide, index, current, handleSlideClick }: SlideProps) => {
           }}
         >
           <Image
-            className="absolute inset-0 h-full object-fill  "
-            style={{
-              opacity: current === index ? 1 : 0.5,
-            }}
-            alt={src}
             src={src}
-            width={800}
-            height={800}
+            alt=""
+            fill // replaces width+height
+            sizes="(max-width: 768px) 90vw, 70vmin"
+            className="object-cover" // keeps aspect ratio, no stretching
             quality={100}
-            loading="eager"
-            decoding="sync"
+            priority={current === index}
+            loading={current === index ? "eager" : "lazy"}
+            decoding="async"
           />
           {current === index && (
             <div

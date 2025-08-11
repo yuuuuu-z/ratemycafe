@@ -13,7 +13,7 @@ export default function PageTransition({
   return (
     <AnimatePresence mode="wait">
       <motion.div
-        key={pathName + "-transition"} // only key the wrapper
+        key={pathName + "-transition"}
         initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: -15 }}

@@ -17,6 +17,7 @@ export function ImageSlider({ cafeId }: { cafeId: string }) {
       const { data, error } = await supabase
         .from("cafes")
         .select("gallery_urls")
+        
         .eq("id", cafeId)
         .single();
 
