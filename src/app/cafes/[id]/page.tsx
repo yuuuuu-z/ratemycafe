@@ -9,6 +9,7 @@ import { ImageSlider } from "@/components/ImageSlider";
 import { ReviewForm } from "@/components/ReviewForm";
 import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { User as SupabaseUser } from "@supabase/supabase-js";
 
 type PageProps = {
   params: Promise<{ id: string }>;
@@ -23,13 +24,13 @@ type Cafe = {
   updated_at?: string;
 };
 
-type User = {
-  id: string;
-  full_name: string;
-  email?: string;
-  created_at?: string;
-  updated_at?: string;
-};
+// type User = {
+//   id: string;
+//   full_name: string;
+//   email?: string;
+//   created_at?: string;
+//   updated_at?: string;
+// };
 
 type Review = {
   id: string;
@@ -48,7 +49,7 @@ export default function CafeDetailPage({ params }: PageProps) {
   const { id } = React.use(params);
 
   const [cafe, setCafe] = useState<Cafe | null>(null);
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [currentUser, setCurrentUser] = useState<SupabaseUser | null>(null);
 
   const [reviews, setReviews] = useState<Review[]>([]);
 
