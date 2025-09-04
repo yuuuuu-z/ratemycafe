@@ -6,6 +6,7 @@ import { useState } from "react";
 import { Button } from "./button";
 import { BadgeCheckIcon, Star } from "lucide-react";
 import { Badge } from "./badge";
+import Link from "next/link";
 
 export const HoverEffect = ({
   items,
@@ -17,6 +18,7 @@ export const HoverEffect = ({
     link: string;
     image: string;
     review: number;
+    rating: number;
   }[];
   className?: string;
 }) => {
@@ -30,7 +32,7 @@ export const HoverEffect = ({
       )}
     >
       {items.map((item, idx) => (
-        <a
+        <Link
           href={item?.link}
           key={idx}
           className="relative group  block p-2 h-full w-full "
@@ -93,18 +95,21 @@ export const HoverEffect = ({
 
             <div className="flex items-center justify-between py-5   ">
               <CardDescription className=" pb-4">
-                {item.review} reviews
+                {item.rating} reviews
               </CardDescription>
               <Button
                 variant="secondary"
                 size="lg"
-                className="flex items-center size-12  rounded-full"
+                className={cn(
+                  "flex items-center size-14  rounded-full",
+                  item.rating > 0 ? "bg-green-500 text-white" : null
+                )}
               >
                 {item.review} <Star />
               </Button>
             </div>
           </Card>
-        </a>
+        </Link>
       ))}
     </div>
   );

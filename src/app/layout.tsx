@@ -6,7 +6,7 @@ import NextTopLoader from "nextjs-toploader";
 import Navbar from "@/components/Navbar";
 import { ThemeProvider } from "next-themes";
 import Footer from "@/components/Footer";
-import PageTransition from "@/components/PageTransition";
+// import PageTransition from "@/components/PageTransition";
 
 const karla = Karla({
   variable: "--font-karla",
@@ -33,7 +33,7 @@ export default function RootLayout({
           <main className="max-w-6xl mx-auto min-h-screen px-5 flex flex-col">
             <NextTopLoader showSpinner={false} color="black" />
             <Navbar />
-            <PageTransition>{children}</PageTransition>
+            {children}
             <Footer />
             <Toaster richColors />
           </main>

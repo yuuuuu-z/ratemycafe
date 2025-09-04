@@ -117,6 +117,9 @@ export default async function CafeDetailPage({ params }: PageProps) {
           </div>
         </div>
 
+        <div className="my-20">
+          <ReviewForm cafeId={id} />
+        </div>
         {/* Display Submitted Reviews */}
         <div className="mt-12 flex flex-col gap-8">
           {/* 2️⃣ Place the new form here */}
@@ -126,8 +129,9 @@ export default async function CafeDetailPage({ params }: PageProps) {
               className="border-t border-gray-200 dark:border-gray-700 pt-6"
             >
               <div className="flex items-center gap-2">
-                <Star className="text-yellow-400 fill-yellow-400" />
                 <span className="font-semibold">{review.rating}</span>
+                <Star className="text-yellow-400 fill-yellow-400" />
+                
 
                 <span className="text-sm text-gray-500 dark:text-gray-400 ml-4">
                   {new Date(review.created_at).toLocaleDateString()}
@@ -138,8 +142,6 @@ export default async function CafeDetailPage({ params }: PageProps) {
               </p>
             </div>
           ))}
-
-          <ReviewForm cafeId={id} />
         </div>
       </div>
     </div>
