@@ -3,7 +3,13 @@
 import { createClientSupabase } from "@/utils/supabase/client";
 import { notFound } from "next/navigation";
 import Image from "next/image";
-import { BadgeCheckIcon, MapPinned, Star } from "lucide-react";
+import {
+  BadgeCheckIcon,
+  EditIcon,
+  MapPinned,
+  Star,
+  Trash2,
+} from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { ImageSlider } from "@/components/ImageSlider";
 import { ReviewForm } from "@/components/ReviewForm";
@@ -230,48 +236,53 @@ export default function CafeDetailPage({ params }: PageProps) {
               className=" border-t border-gray-200 dark:border-gray-700 pt-6"
             >
               <div className="flex flex-col  gap-2">
-                <div className="flex gap-2">
-                  <span className="font-semibold">{review.rating}</span>
-                  <Star className="text-yellow-400 fill-yellow-400" />
+                <div className="flex gap-2 items-center">
+                  <Badge
+                    variant="outline"
+                    className="h-5 min-w-5 rounded-full px-4 py-3 tabular-nums bg-blue-500/20 backdrop-blur-sm border border-blue-300/30 text-blue-900 dark:text-white shadow-lg "
+                  >
+                    <span className="font-semibold ">{review.rating}</span>
+                    <Star className="text-yellow-400 fill-yellow-400" />
 
-                  <span className="text-sm flex gap-2">
-                    from{" "}
-                    <p className="font-bold">
-                      {review.user?.full_name ?? "Anonymous"}
-                    </p>
-                  </span>
-                  <span className="text-sm text-gray-500 dark:text-gray-400 ml-4">
-                    {new Date(review.created_at).toLocaleDateString()}
-                  </span>
+                    <span className="text-sm flex gap-2">
+                      from{" "}
+                      <p className="font-bold ">
+                        {review.user?.full_name ?? "Anonymous"}
+                      </p>
+                    </span>
+                    <span className="text-sm text-gray-500 dark:text-gray-400 ml-4">
+                      {new Date(review.created_at).toLocaleDateString()}
+                    </span>
+                  </Badge>
                 </div>
 
                 {/* ✅ Only show if this review belongs to the current user */}
 
                 {currentUser?.id === review.user_id && (
-                  <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4 mt-4">
-                    {/* Comment section - takes full width on mobile, limited width on larger screens */}
-                    <div className="flex-1 min-w-0">
-                      <p className="text-gray-700 dark:text-gray-300 break-words">
-                        {review.comment}
-                      </p>
+                  <div className="flex flex-col   sm:flex-row sm:justify-start sm:items-start gap-4 mt-4">
+                    {/* Comment section */}
+                    <div className="flex-1 ">
+                      <p className=" px-5 py-2 ">{review.comment}</p>
                     </div>
 
-                    {/* Button section - stacks vertically on mobile, horizontal on larger screens */}
-                    <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 sm:ml-4 flex-shrink-0">
+                    {/* Button section */}
+                    <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 flex-shrink-0">
                       <Button
-                        variant="outline"
+                        variant="ghost"
                         size="sm"
-                        className="dark:bg-green-500 bg-green-500 text-white hover:bg-green-600 dark:hover:bg-green-600"
+                        className="bg-green-500/20 backdrop-blur-sm border border-green-300/30 text-green-900 hover:bg-green-500/30 hover:border-green-400/50 transition-all duration-200 shadow-lg hover:shadow-green-500/25 group"
                         onClick={() => handleEdit(review)}
                       >
+                        <EditIcon className="w-3 h-3 group-hover:rotate-12 transition-transform duration-200" />
                         Edit
                       </Button>
                       <Button
-                        variant="outline"
+                        variant="ghost"
                         size="sm"
-                        className="dark:bg-red-500 bg-red-500 text-white hover:bg-red-600 dark:hover:bg-red-600"
+                        className="bg-gradient-to-r from-red-500/20 to-pink-500/20 backdrop-blur-sm border border-red-300/30 text-red-900 dark:text-red-200 hover:from-red-500/30 hover:to-pink-500/30 hover:border-red-400/50 transition-all duration-200 shadow-lg hover:shadow-red-500/25 group"
                         onClick={() => handleDelete(review.id)}
                       >
+                        <Trash2 className="w-3 h-3 group-hover:scale-110 transition-transform duration-200" />
                         Delete
                       </Button>
                     </div>
