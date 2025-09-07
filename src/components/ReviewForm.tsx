@@ -7,18 +7,29 @@ import { Star } from "lucide-react";
 import { Button } from "./ui/button";
 import { Textarea } from "./ui/textarea";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
+
+type Review = {
+  id: string;
+  rating: number;
+  comment: string;
+  created_at: string;
+  user_id: string;
+  user?: {
+    id: string;
+    full_name: string;
+  } | null;
+};
 
 type ReviewFormProps = {
   cafeId: string;
+  onReviewSubmitted?: (newReview: Review) => void;
 };
 
-export const ReviewForm = ({ cafeId }: ReviewFormProps) => {
+export const ReviewForm = ({ cafeId, onReviewSubmitted }: ReviewFormProps) => {
   const [rating, setRating] = useState<number>(0);
   const [comment, setComment] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const supabase = createClientSupabase();
-  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,12 +53,16 @@ export const ReviewForm = ({ cafeId }: ReviewFormProps) => {
     }
 
     try {
-      const { error } = await supabase.from("reviews").insert({
-        cafe_id: cafeId,
-        user_id: user.id,
-        rating,
-        comment,
-      });
+      const { data, error } = await supabase
+        .from("reviews")
+        .insert({
+          cafe_id: cafeId,
+          user_id: user.id,
+          rating,
+          comment,
+        })
+        .select("id, rating, comment, created_at, user_id")
+        .single();
 
       if (error) {
         throw error;
@@ -55,12 +70,27 @@ export const ReviewForm = ({ cafeId }: ReviewFormProps) => {
 
       toast.success("Review submitted successfully!");
 
+      // Create the new review object with user data
+      const newReview: Review = {
+        id: data.id,
+        rating: data.rating,
+        comment: data.comment,
+        created_at: data.created_at,
+        user_id: data.user_id,
+        user: {
+          id: user.id,
+          full_name: user.user_metadata?.full_name || "Anonymous",
+        },
+      };
+
+      // Call the callback to update parent component
+      if (onReviewSubmitted) {
+        onReviewSubmitted(newReview);
+      }
+
       // Reset form
       setRating(0);
       setComment("");
-
-      // Refresh the page or reviews section
-      router.refresh();
     } catch (error) {
       console.error("Error submitting review:", error);
       toast.error(
@@ -100,7 +130,7 @@ export const ReviewForm = ({ cafeId }: ReviewFormProps) => {
         value={comment}
         onChange={(e) => setComment(e.target.value)}
         rows={4}
-        maxLength={500} // Consider adding a character limit
+        maxLength={500}
       />
       <Button type="submit" disabled={isSubmitting}>
         {isSubmitting ? "Submitting..." : "Submit Review"}

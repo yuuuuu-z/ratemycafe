@@ -16,10 +16,31 @@ import { ReviewForm } from "@/components/ReviewForm";
 import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { User as SupabaseUser } from "@supabase/supabase-js";
+import {
+  AlertDialog,
+  AlertDialogTrigger,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogCancel,
+  AlertDialogAction,
+} from "@/components/ui/alert-dialog";
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+  DialogClose,
+} from "@/components/ui/dialog";
 
 type PageProps = {
   params: Promise<{ id: string }>;
 };
+
 type Cafe = {
   id: string;
   name: string;
@@ -29,14 +50,6 @@ type Cafe = {
   created_at?: string;
   updated_at?: string;
 };
-
-// type User = {
-//   id: string;
-//   full_name: string;
-//   email?: string;
-//   created_at?: string;
-//   updated_at?: string;
-// };
 
 type Review = {
   id: string;
@@ -56,13 +69,16 @@ export default function CafeDetailPage({ params }: PageProps) {
 
   const [cafe, setCafe] = useState<Cafe | null>(null);
   const [currentUser, setCurrentUser] = useState<SupabaseUser | null>(null);
-
   const [reviews, setReviews] = useState<Review[]>([]);
 
-  // Fetch cafe, reviews, and user
+  // Track editable comments
+  const [editComments, setEditComments] = useState<Record<string, string>>({});
+  // Track which edit dialogs are open
+  const [openDialogs, setOpenDialogs] = useState<Record<string, boolean>>({});
+
+  // Fetch data
   useEffect(() => {
     async function fetchData() {
-      // 1️⃣ Get cafe details
       const { data: cafeData, error: cafeError } = await supabase
         .from("cafes")
         .select("*")
@@ -72,19 +88,16 @@ export default function CafeDetailPage({ params }: PageProps) {
       if (cafeError || !cafeData) return notFound();
       setCafe(cafeData);
 
-      // 2️⃣ Get reviews
       const { data: reviewData } = await supabase
         .from("reviews")
         .select("id, rating, comment, created_at, user_id")
         .eq("cafe_id", id)
         .order("created_at", { ascending: false });
 
-      // 3️⃣ Get users
       const { data: users } = await supabase
         .from("users")
         .select("id, full_name");
 
-      // 4️⃣ Merge reviews with user info
       const mergedReviews =
         reviewData?.map((r) => ({
           ...r,
@@ -93,17 +106,23 @@ export default function CafeDetailPage({ params }: PageProps) {
 
       setReviews(mergedReviews);
 
-      // 5️⃣ Get current logged-in user
       const {
         data: { user },
       } = await supabase.auth.getUser();
       setCurrentUser(user);
+
+      // Initialize editComments state
+      const initialComments: Record<string, string> = {};
+      mergedReviews.forEach((r) => {
+        initialComments[r.id] = r.comment;
+      });
+      setEditComments(initialComments);
     }
 
     fetchData();
-  }, [currentUser, id, supabase]);
+  }, [id, supabase]);
 
-  // 🔹 Delete a review
+  // Delete review
   async function handleDelete(reviewId: string) {
     const { error } = await supabase
       .from("reviews")
@@ -113,17 +132,22 @@ export default function CafeDetailPage({ params }: PageProps) {
       console.error("Delete failed:", error);
     } else {
       setReviews(reviews.filter((r) => r.id !== reviewId));
+      setEditComments((prev) => {
+        const copy = { ...prev };
+        delete copy[reviewId];
+        return copy;
+      });
     }
   }
 
-  // 🔹 Edit a review
+  // Edit review
   async function handleEdit(review: Review) {
-    const newComment = prompt("Edit your review:", review.comment);
-    if (!newComment) return;
+    const comment = editComments[review.id];
+    if (!comment?.trim()) return;
 
     const { error } = await supabase
       .from("reviews")
-      .update({ comment: newComment })
+      .update({ comment: comment.trim() })
       .eq("id", review.id);
 
     if (error) {
@@ -131,9 +155,14 @@ export default function CafeDetailPage({ params }: PageProps) {
     } else {
       setReviews(
         reviews.map((r) =>
-          r.id === review.id ? { ...r, comment: newComment } : r
+          r.id === review.id ? { ...r, comment: comment.trim() } : r
         )
       );
+      // Close the dialog
+      setOpenDialogs((prev) => ({
+        ...prev,
+        [review.id]: false,
+      }));
     }
   }
 
@@ -149,7 +178,7 @@ export default function CafeDetailPage({ params }: PageProps) {
 
   return (
     <div className="max-w-5xl w-full mx-auto px-4 pt-20 pb-12 text-[17px] leading-relaxed">
-      {/* Cafe Info Section */}
+      {/* Cafe Info */}
       <div className="flex flex-col md:flex-row md:items-start md:gap-8 mb-12">
         <div className="relative w-32 h-32 mb-4 md:mb-0 md:w-40 md:h-40">
           <Image
@@ -159,14 +188,12 @@ export default function CafeDetailPage({ params }: PageProps) {
             className="object-cover rounded-full border"
           />
         </div>
-
         <div className="flex flex-col">
           <div>
             <div className="text-4xl font-bold flex items-center gap-2">
               {cafe.name}
               <Badge className="bg-blue-500 text-white dark:bg-blue-600 mt-2">
-                <BadgeCheckIcon />
-                Verified
+                <BadgeCheckIcon /> Verified
               </Badge>
             </div>
             <div className="text-lg mt-2 flex items-center gap-2">
@@ -174,19 +201,17 @@ export default function CafeDetailPage({ params }: PageProps) {
             </div>
             <p className="mt-4 text-lg max-w-3xl">{cafe.description}</p>
           </div>
-
           <div>
             <ImageSlider cafeId={id} />
           </div>
         </div>
       </div>
 
-      {/* Review Section */}
+      {/* Reviews Section */}
       <div className="mt-16">
         <h2 className="text-3xl font-bold mb-8">Reviews</h2>
-
         <div className="flex flex-col gap-8 md:flex-row md:items-start md:justify-between border-t border-gray-200 dark:border-gray-700 pt-8">
-          {/* Review Stats */}
+          {/* Stats */}
           <div className="flex gap-16">
             <div>
               <p className="text-base">Total Reviews</p>
@@ -197,7 +222,6 @@ export default function CafeDetailPage({ params }: PageProps) {
               <p className="text-2xl font-semibold">{averageRating}</p>
             </div>
           </div>
-
           {/* Rating Legend */}
           <div className="flex flex-col gap-3 text-base mt-2 md:mt-0">
             {[5, 4, 3, 2, 1].map((rating) => (
@@ -213,7 +237,6 @@ export default function CafeDetailPage({ params }: PageProps) {
                     ][5 - rating]
                   }
                 />
-                {rating}{" "}
                 {
                   ["Excellent", "Good", "Average", "Below Average", "Poor"][
                     5 - rating
@@ -225,28 +248,33 @@ export default function CafeDetailPage({ params }: PageProps) {
         </div>
 
         <div className="my-20">
-          <ReviewForm cafeId={id} />
+          <ReviewForm
+            cafeId={id}
+            onReviewSubmitted={(newReview) => {
+              setReviews((prev) => [newReview, ...prev]);
+            }}
+          />
         </div>
 
-        {/* Display Submitted Reviews */}
-        <div className=" mt-12 flex flex-col gap-8">
+        {/* Review List */}
+        <div className="mt-12 flex flex-col gap-8">
           {reviews.map((review) => (
             <div
               key={review.id}
-              className=" border-t border-gray-200 dark:border-gray-700 pt-6"
+              className="border-t border-gray-200 dark:border-gray-700 pt-6"
             >
-              <div className="flex flex-col  gap-2">
+              <div className="flex flex-col gap-4">
+                {/* Review Header */}
                 <div className="flex gap-2 items-center">
                   <Badge
                     variant="outline"
-                    className="h-5 min-w-5 rounded-full px-4 py-3 tabular-nums bg-blue-500/20 backdrop-blur-sm border border-blue-300/30 text-blue-900 dark:text-white shadow-lg "
+                    className="h-5 min-w-5 rounded-full px-4 py-3 tabular-nums bg-blue-500/20 backdrop-blur-sm border border-blue-300/30 dark:text-white shadow-lg"
                   >
-                    <span className="font-semibold ">{review.rating}</span>
+                    <span className="font-semibold">{review.rating}</span>
                     <Star className="text-yellow-400 fill-yellow-400" />
-
                     <span className="text-sm flex gap-2">
                       from{" "}
-                      <p className="font-bold ">
+                      <p className="font-bold">
                         {review.user?.full_name ?? "Anonymous"}
                       </p>
                     </span>
@@ -256,36 +284,100 @@ export default function CafeDetailPage({ params }: PageProps) {
                   </Badge>
                 </div>
 
-                {/* ✅ Only show if this review belongs to the current user */}
+                {/* Comment */}
+                <div className=" py-2">
+                  <p>{review.comment}</p>
+                </div>
 
+                {/* User actions - Only show if current user owns this review */}
                 {currentUser?.id === review.user_id && (
-                  <div className="flex flex-col   sm:flex-row sm:justify-start sm:items-start gap-4 mt-4">
-                    {/* Comment section */}
-                    <div className="flex-1 ">
-                      <p className=" px-5 py-2 ">{review.comment}</p>
-                    </div>
+                  <div className="flex gap-3 mt-2">
+                    {/* Edit Dialog */}
+                    <Dialog
+                      open={openDialogs[review.id] ?? false}
+                      onOpenChange={(isOpen) =>
+                        setOpenDialogs((prev) => ({
+                          ...prev,
+                          [review.id]: isOpen,
+                        }))
+                      }
+                    >
+                      <DialogTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="bg-green-500/20 backdrop-blur-sm border border-green-300/30 hover:bg-green-500/30 hover:border-green-400/50 transition-all duration-200 shadow-lg hover:shadow-green-500/25 group"
+                        >
+                          <EditIcon className="w-3 h-3 group-hover:rotate-12 transition-transform duration-200" />
+                          Edit
+                        </Button>
+                      </DialogTrigger>
 
-                    {/* Button section */}
-                    <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 flex-shrink-0">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="bg-green-500/20 backdrop-blur-sm border border-green-300/30 text-green-900 hover:bg-green-500/30 hover:border-green-400/50 transition-all duration-200 shadow-lg hover:shadow-green-500/25 group"
-                        onClick={() => handleEdit(review)}
-                      >
-                        <EditIcon className="w-3 h-3 group-hover:rotate-12 transition-transform duration-200" />
-                        Edit
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="bg-gradient-to-r from-red-500/20 to-pink-500/20 backdrop-blur-sm border border-red-300/30 text-red-900 dark:text-red-200 hover:from-red-500/30 hover:to-pink-500/30 hover:border-red-400/50 transition-all duration-200 shadow-lg hover:shadow-red-500/25 group"
-                        onClick={() => handleDelete(review.id)}
-                      >
-                        <Trash2 className="w-3 h-3 group-hover:scale-110 transition-transform duration-200" />
-                        Delete
-                      </Button>
-                    </div>
+                      <DialogContent className="motion-safe:animate-none">
+                        <DialogHeader>
+                          <DialogTitle>Edit your review</DialogTitle>
+                        </DialogHeader>
+
+                        <textarea
+                          value={editComments[review.id] || ""}
+                          onChange={(e) =>
+                            setEditComments((prev) => ({
+                              ...prev,
+                              [review.id]: e.target.value,
+                            }))
+                          }
+                          className="w-full mt-2 p-2 border rounded-md focus:outline-none focus:ring focus:ring-green-300 resize-none"
+                          rows={4}
+                          placeholder="Update your comment..."
+                        />
+
+                        <DialogFooter className="gap-2">
+                          <DialogClose asChild>
+                            <Button variant="outline">Cancel</Button>
+                          </DialogClose>
+                          <Button
+                            onClick={() => handleEdit(review)}
+                            disabled={!editComments[review.id]?.trim()}
+                          >
+                            Save Changes
+                          </Button>
+                        </DialogFooter>
+                      </DialogContent>
+                    </Dialog>
+
+                    {/* Delete Alert Dialog */}
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="bg-gradient-to-r from-red-500/20 to-pink-500/20 backdrop-blur-sm border border-red-300/30 dark:text-red-200 hover:from-red-500/30 hover:to-pink-500/30 hover:border-red-400/50 transition-all duration-200 shadow-lg hover:shadow-red-500/25 group"
+                        >
+                          <Trash2 className="w-3 h-3 group-hover:scale-110 transition-transform duration-200" />
+                          Delete
+                        </Button>
+                      </AlertDialogTrigger>
+
+                      <AlertDialogContent className="motion-safe:animate-none">
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            This action cannot be undone. This will permanently
+                            delete your review.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogAction
+                            onClick={() => handleDelete(review.id)}
+                            className="bg-red-600 hover:bg-red-700"
+                          >
+                            Delete Review
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
                   </div>
                 )}
               </div>

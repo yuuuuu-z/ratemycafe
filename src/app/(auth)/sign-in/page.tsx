@@ -32,10 +32,11 @@ export default function Page() {
   }, [router, supabase]);
 
   const handleGoogleSignIn = async () => {
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
     await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}`,
+        redirectTo: `${siteUrl}/auth/callback`,
         queryParams: {
           prompt: "select_account",
         },
