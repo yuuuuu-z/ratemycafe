@@ -209,7 +209,25 @@ export default function CafeDetailPage({ params }: PageProps) {
 
       {/* Reviews Section */}
       <div className="mt-16">
-        <h2 className="text-3xl font-bold mb-8">Reviews</h2>
+        <div className="flex flex-col gap-5 md:flex-row md:items-center justify-between mb-5 ">
+          <h2 className="text-3xl font-bold">Reviews</h2>
+
+          <div className="flex-wrap space-x-3 space-y-3 gap-3">
+            <Badge className="bg-purple-200/70 text-purple-800 px-3 py-1.5 text-sm font-medium rounded-full shadow-sm hover:bg-purple-500/30 hover:border-purple-400/50 transition-all duration-200  hover:shadow-green-500/25 group">
+              🍵 Taste
+            </Badge>
+            <Badge className="bg-blue-200/70 text-blue-800 px-3 py-1.5 text-sm font-medium rounded-full shadow-sm hover:bg-blue-500/30 hover:border-blue-400/50 transition-all duration-200  hover:shadow-green-500/25 group">
+              💻 Productivity
+            </Badge>
+            <Badge className="bg-green-200/70 text-green-800 px-3 py-1.5 text-sm font-medium rounded-full shadow-sm hover:bg-green-500/30 hover:border-green-400/50 transition-all duration-200  hover:shadow-green-500/25 group">
+              🌿 Environment
+            </Badge>
+            <Badge className="bg-red-200/70 text-red-800 px-3 py-1.5 text-sm font-medium rounded-full shadow-sm hover:bg-red-500/30 hover:border-red-400/50 transition-all duration-200  hover:shadow-green-500/25 group">
+              💰 Price
+            </Badge>
+          </div>
+        </div>
+
         <div className="flex flex-col gap-8 md:flex-row md:items-start md:justify-between border-t border-gray-200 dark:border-gray-700 pt-8">
           {/* Stats */}
           <div className="flex gap-16">
