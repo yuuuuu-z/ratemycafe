@@ -185,6 +185,7 @@ export default function CafesPage() {
 
       <HoverEffect
         items={finalList.map((cafe) => ({
+          id: cafe.id,
           title: cafe.title,
           description: cafe.description,
           link: cafe.link,
