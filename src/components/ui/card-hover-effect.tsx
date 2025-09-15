@@ -1,7 +1,6 @@
 import { cn } from "@/lib/utils";
 import { AnimatePresence, motion } from "motion/react";
 import Image from "next/image";
-
 import { useState } from "react";
 import { Button } from "./button";
 import { BadgeCheckIcon, Star } from "lucide-react";
@@ -17,8 +16,8 @@ export const HoverEffect = ({
     description: string;
     link: string;
     image: string;
-    review: number;
-    rating: number;
+    review: number; // ⭐ average rating
+    rating: number; // 👥 number of reviews
   }[];
   className?: string;
 }) => {
@@ -27,7 +26,7 @@ export const HoverEffect = ({
   return (
     <div
       className={cn(
-        "grid grid-cols-1 md:grid-cols-2  lg:grid-cols-3  py-10  ",
+        "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 py-10 gap-4",
         className
       )}
     >
@@ -35,14 +34,14 @@ export const HoverEffect = ({
         <Link
           href={item?.link}
           key={idx}
-          className="relative group  block p-2 h-full w-full "
+          className="relative group block p-2 h-full w-full"
           onMouseEnter={() => setHoveredIndex(idx)}
           onMouseLeave={() => setHoveredIndex(null)}
         >
           <AnimatePresence>
             {hoveredIndex === idx && (
               <motion.span
-                className="absolute inset-0 h-full w-full block  rounded-3xl  "
+                className="absolute inset-0 h-full w-full block rounded-3xl"
                 layoutId="hoverBackground"
                 initial={{ opacity: 0 }}
                 animate={{
@@ -56,7 +55,7 @@ export const HoverEffect = ({
               />
             )}
           </AnimatePresence>
-          <Card className=" border-gray-300 d hover:ring-2 hover:ring-green-500 hover:scale-90 transition-all">
+          <Card className="border-gray-300 hover:ring-2 hover:ring-green-500 hover:scale-95 transition-all">
             <div className="flex items-center mb-4">
               <Image
                 src={item.image}
@@ -66,7 +65,7 @@ export const HoverEffect = ({
                 className="rounded-lg"
               />
             </div>
-            <div className="flex-col h-[100px] ">
+            <div className="flex-col h-[100px]">
               <CardTitle>
                 <span className="md:text-[1.4rem] text-[1.2rem] font-bold pr-3">
                   {item.title}
@@ -77,13 +76,13 @@ export const HoverEffect = ({
                 >
                   <BadgeCheckIcon />
                   Verified
-                </Badge>{" "}
+                </Badge>
               </CardTitle>
               <CardDescription>
                 {item.description.length > 100 ? (
                   <>
                     {item.description.slice(0, 80)}...{" "}
-                    <span style={{ color: "blue", cursor: "pointer" }}>
+                    <span className="text-blue-500 cursor-pointer">
                       see more
                     </span>
                   </>
@@ -93,19 +92,19 @@ export const HoverEffect = ({
               </CardDescription>
             </div>
 
-            <div className="flex items-center justify-between py-5   ">
-              <CardDescription className=" pb-4">
+            <div className="flex items-center justify-between py-5">
+              <CardDescription className="pb-4">
                 {item.rating} reviews
               </CardDescription>
               <Button
                 variant="secondary"
-                size="lg"
+                // size="lg"
                 className={cn(
-                  "flex items-center size-14  rounded-full",
-                  item.rating > 0 ? "bg-green-500 text-white" : null
+                  "flex items-center h-14 w-14 gap-1 px-4 py-2 rounded-full",
+                  item.rating > 0 ? "bg-green-500 text-white" : "bg-gray-200"
                 )}
               >
-                {item.review} <Star />
+                {item.review} <Star size={18} />
               </Button>
             </div>
           </Card>
@@ -125,7 +124,7 @@ export const Card = ({
   return (
     <div
       className={cn(
-        "rounded-2xl h-full w-full p-4 overflow-hidden  border border-transparent  relative z-20 dark:text-white ",
+        "rounded-2xl h-full w-full p-4 overflow-hidden border border-transparent relative z-20 dark:text-white",
         className
       )}
     >
@@ -135,6 +134,7 @@ export const Card = ({
     </div>
   );
 };
+
 export const CardTitle = ({
   className,
   children,
@@ -144,12 +144,13 @@ export const CardTitle = ({
 }) => {
   return (
     <h4
-      className={cn(" dark:text-white font-bold tracking-wide mt-4", className)}
+      className={cn("dark:text-white font-bold tracking-wide mt-4", className)}
     >
       {children}
     </h4>
   );
 };
+
 export const CardDescription = ({
   className,
   children,
@@ -158,7 +159,7 @@ export const CardDescription = ({
   children: React.ReactNode;
 }) => {
   return (
-    <p className={cn("mt-8  tracking-wide leading-relaxed text-sm", className)}>
+    <p className={cn("mt-4 tracking-wide leading-relaxed text-sm", className)}>
       {children}
     </p>
   );

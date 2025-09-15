@@ -185,7 +185,7 @@ export default function CafeDetailPage({ params }: PageProps) {
             src={cafe.image_url}
             alt={cafe.name}
             fill
-            className="object-cover rounded-full border"
+            className="object-contain rounded-full border border-gray-200 shadow-sm bg-gray-50"
           />
         </div>
         <div className="flex flex-col">
