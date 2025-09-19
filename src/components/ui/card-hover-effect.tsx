@@ -65,14 +65,15 @@ export const HoverEffect = ({
               )}
             </AnimatePresence>
 
-            <Card className="border-gray-300 hover:ring-2 hover:ring-green-500 hover:scale-95 transition-all relative">
-              {/* Best Shop Badge on top border */}
+            <Card className="border-2 border-green-500 hover:ring-2 hover:ring-green-500 hover:scale-95 transition-all relative">
+              {/* card content */}
+
               {isBestShop && (
-                <Badge className="absolute top-3 -right-20 -translate-x-1/2 -translate-y-1/2 bg-gradient-to-r from-green-500 to-green-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md rotate-6 border border-green-500  ">
-                  🌟 Best Coffee Shop
+                <Badge className="absolute top-1 -right-20 -translate-x-1/2 -translate-y-1/2 bg-gradient-to-r from-green-500 to-green-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md rotate-6 border border-green-500 ">
+                  {" "}
+                  🌟 Best Coffee Shop{" "}
                 </Badge>
               )}
-
               <div className="flex items-center mb-4">
                 <Image
                   src={item.image}

@@ -33,6 +33,16 @@ const nextConfig: NextConfig = {
         hostname: "lh3.googleusercontent.com",
         pathname: "/**",
       },
+      {
+        protocol: "https",
+        hostname: "plus.unsplash.com",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "scontent.fpnh5-2.fna.fbcdn.net",
+        pathname: "/**",
+      },
     ],
   },
 };

@@ -51,11 +51,14 @@ export default function Navbar() {
       {/* Conditionally render Sign In or Sign Out */}
       {pathname !== "/sign-in" &&
         (isLoggedIn ? (
-          <>
+          <div className="flex gap-2">
+            <Link href="/admin">
+              <Button variant="ghost">Admin</Button>
+            </Link>
             <Button className="bg-red-500 text-white" onClick={handleSignOut}>
               Sign Out
             </Button>
-          </>
+          </div>
         ) : (
           <Link href="/sign-in">
             <Button>Sign In</Button>
