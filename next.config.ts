@@ -5,11 +5,6 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "upload.wikimedia.org",
-        pathname: "/wikipedia/**",
-      },
-      {
-        protocol: "https",
         hostname: "images.unsplash.com",
         pathname: "/**",
       },
@@ -41,6 +36,11 @@ const nextConfig: NextConfig = {
       {
         protocol: "https",
         hostname: "scontent.fpnh5-2.fna.fbcdn.net",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "www.browncoffee.com.kh",
         pathname: "/**",
       },
     ],
