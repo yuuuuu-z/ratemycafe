@@ -43,6 +43,11 @@ const nextConfig: NextConfig = {
         hostname: "www.browncoffee.com.kh",
         pathname: "/**",
       },
+      {
+        protocol: "https",
+        hostname: "upload.wikimedia.org",
+        pathname: "/**",
+      },
     ],
   },
 };

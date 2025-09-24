@@ -63,6 +63,8 @@ export default function AdminPage() {
   >(null);
   const [showGalleryModal, setShowGalleryModal] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const [logoFile, setLogoFile] = useState<File | null>(null);
+  const [logoUploading, setLogoUploading] = useState(false);
 
   const supabase = createClientSupabase();
 
@@ -182,8 +184,10 @@ export default function AdminPage() {
       return;
     }
 
-    if (!newCafe.image_url.trim()) {
-      setError("Logo Image URL is required");
+    if (!logoFile && !newCafe.image_url.trim()) {
+      setError(
+        "Logo image is required (either upload a file or provide a URL)"
+      );
       return;
     }
 
@@ -191,11 +195,29 @@ export default function AdminPage() {
       setIsSubmitting(true);
       setError(null);
 
+      let logoUrl = newCafe.image_url.trim();
+
+      // Upload logo file if one is selected
+      if (logoFile) {
+        setLogoUploading(true);
+        try {
+          const folderName = "logos";
+          logoUrl = await uploadImage(logoFile, folderName);
+        } catch (err) {
+          setError(
+            err instanceof Error ? err.message : "Failed to upload logo"
+          );
+          return;
+        } finally {
+          setLogoUploading(false);
+        }
+      }
+
       const { error } = await supabase.from("cafes").insert([
         {
           name: newCafe.name.trim(),
           description: newCafe.description.trim(),
-          image_url: newCafe.image_url.trim(),
+          image_url: logoUrl,
           location: newCafe.location.trim(),
           gallery_urls: [], // Initialize empty array
         },
@@ -215,6 +237,7 @@ export default function AdminPage() {
 
       setSuccess("Cafe created successfully!");
       setNewCafe({ name: "", description: "", image_url: "", location: "" });
+      setLogoFile(null);
       fetchCafes();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to create cafe");
@@ -230,12 +253,30 @@ export default function AdminPage() {
       setIsSubmitting(true);
       setError(null);
 
+      let logoUrl = newCafe.image_url.trim() || cafe.image_url;
+
+      // Upload logo file if one is selected
+      if (logoFile) {
+        setLogoUploading(true);
+        try {
+          const folderName = "logos";
+          logoUrl = await uploadImage(logoFile, folderName);
+        } catch (err) {
+          setError(
+            err instanceof Error ? err.message : "Failed to upload logo"
+          );
+          return;
+        } finally {
+          setLogoUploading(false);
+        }
+      }
+
       const { error } = await supabase
         .from("cafes")
         .update({
           name: newCafe.name.trim() || cafe.name,
           description: newCafe.description.trim() || cafe.description,
-          image_url: newCafe.image_url.trim() || cafe.image_url,
+          image_url: logoUrl,
           location: newCafe.location.trim() || cafe.location,
         })
         .eq("id", cafe.id);
@@ -255,6 +296,7 @@ export default function AdminPage() {
       setSuccess("Cafe updated successfully!");
       setEditingCafe(null);
       setNewCafe({ name: "", description: "", image_url: "", location: "" });
+      setLogoFile(null);
       fetchCafes();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to update cafe");
@@ -424,6 +466,14 @@ export default function AdminPage() {
     }
   }
 
+  function handleLogoFileSelect(e: React.ChangeEvent<HTMLInputElement>) {
+    if (e.target.files && e.target.files[0]) {
+      setLogoFile(e.target.files[0]);
+      // Clear any existing image_url when a file is selected
+      setNewCafe({ ...newCafe, image_url: "" });
+    }
+  }
+
   // start editing a cafe
   function startEdit(cafe: Cafe) {
     setEditingCafe(cafe);
@@ -433,12 +483,14 @@ export default function AdminPage() {
       image_url: cafe.image_url,
       location: cafe.location,
     });
+    setLogoFile(null);
   }
 
   // cancel editing
   function cancelEdit() {
     setEditingCafe(null);
     setNewCafe({ name: "", description: "", image_url: "", location: "" });
+    setLogoFile(null);
     setError(null);
   }
 
@@ -642,27 +694,77 @@ export default function AdminPage() {
                   disabled={isSubmitting}
                 />
               </div>
-              <div className="md:col-span-2 space-y-2">
-                <Label htmlFor="image_url">Logo Image URL *</Label>
-                <Input
-                  id="image_url"
-                  placeholder="Enter logo image URL"
-                  value={newCafe.image_url}
-                  onChange={(e) =>
-                    setNewCafe({ ...newCafe, image_url: e.target.value })
-                  }
-                  disabled={isSubmitting}
-                />
+              <div className="md:col-span-2 space-y-4">
+                <Label>Logo Image *</Label>
+                <div className="space-y-3">
+                  <div className="space-y-2">
+                    <Label htmlFor="logo_file" className="text-sm font-medium">
+                      Upload Logo Image
+                    </Label>
+                    <Input
+                      id="logo_file"
+                      type="file"
+                      accept="image/*"
+                      onChange={handleLogoFileSelect}
+                      disabled={isSubmitting || logoUploading}
+                      className="file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-primary-foreground hover:file:bg-primary/90"
+                    />
+                    {logoFile && (
+                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                        <svg
+                          className="w-4 h-4"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                          />
+                        </svg>
+                        Selected: {logoFile.name}
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <div className="flex-1 h-px bg-border"></div>
+                    <span className="text-xs text-muted-foreground">OR</span>
+                    <div className="flex-1 h-px bg-border"></div>
+                  </div>
+
+                  {/* <div className="space-y-2">
+                    <Label htmlFor="image_url" className="text-sm font-medium">
+                      Logo Image URL (optional)
+                    </Label>
+                    <Input
+                      id="image_url"
+                      placeholder="Enter logo image URL"
+                      value={newCafe.image_url}
+                      onChange={(e) =>
+                        setNewCafe({ ...newCafe, image_url: e.target.value })
+                      }
+                      disabled={isSubmitting || !!logoFile}
+                    />
+                    {logoFile && (
+                      <p className="text-xs text-muted-foreground">
+                        URL input is disabled when a file is selected
+                      </p>
+                    )}
+                  </div> */}
+                </div>
               </div>
               <div className="md:col-span-2 flex gap-3 pt-4">
                 {editingCafe ? (
                   <>
                     <Button
                       onClick={() => updateCafe(editingCafe)}
-                      disabled={isSubmitting}
+                      disabled={isSubmitting || logoUploading}
                       size="lg"
                     >
-                      {isSubmitting ? (
+                      {isSubmitting || logoUploading ? (
                         <>
                           <svg
                             className="animate-spin -ml-1 mr-3 h-4 w-4"
@@ -684,7 +786,7 @@ export default function AdminPage() {
                               d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                             ></path>
                           </svg>
-                          Updating...
+                          {logoUploading ? "Uploading Logo..." : "Updating..."}
                         </>
                       ) : (
                         "Update Cafe"
@@ -692,7 +794,7 @@ export default function AdminPage() {
                     </Button>
                     <Button
                       onClick={cancelEdit}
-                      disabled={isSubmitting}
+                      disabled={isSubmitting || logoUploading}
                       variant="secondary"
                       size="lg"
                     >
@@ -700,8 +802,12 @@ export default function AdminPage() {
                     </Button>
                   </>
                 ) : (
-                  <Button onClick={addCafe} disabled={isSubmitting} size="lg">
-                    {isSubmitting ? (
+                  <Button
+                    onClick={addCafe}
+                    disabled={isSubmitting || logoUploading}
+                    size="lg"
+                  >
+                    {isSubmitting || logoUploading ? (
                       <>
                         <svg
                           className="animate-spin -ml-1 mr-3 h-4 w-4"
@@ -723,7 +829,7 @@ export default function AdminPage() {
                             d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                           ></path>
                         </svg>
-                        Adding...
+                        {logoUploading ? "Uploading Logo..." : "Adding..."}
                       </>
                     ) : (
                       "Add Cafe"
