@@ -3,15 +3,16 @@
 import React, { useEffect, useState } from "react";
 import { Button } from "./ui/button";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { createClientSupabase } from "@/utils/supabase/client";
-import { toast } from "sonner";
+// import { toast } from "sonner";
 import Logo from "./Logo";
+import UserProfile from "@/componentssupaauth/user-profile";
 
 export default function Navbar() {
   const supabase = createClientSupabase();
   const pathname = usePathname();
-  const router = useRouter();
+  // const router = useRouter();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   // Check if user is signed in
@@ -33,14 +34,14 @@ export default function Navbar() {
   });
 
   // Sign out function
-  const handleSignOut = async () => {
-    const { error } = await supabase.auth.signOut();
-    if (error) {
-      toast.error("Failed to sign out");
-    } else {
-      router.replace("/");
-    }
-  };
+  // const handleSignOut = async () => {
+  //   const { error } = await supabase.auth.signOut();
+  //   if (error) {
+  //     toast.error("Failed to sign out");
+  //   } else {
+  //     router.replace("/");
+  //   }
+  // };
 
   return (
     <div className="flex items-center justify-between py-5">
@@ -51,13 +52,14 @@ export default function Navbar() {
       {/* Conditionally render Sign In or Sign Out */}
       {pathname !== "/sign-in" &&
         (isLoggedIn ? (
-          <div className="flex gap-2">
+          <div className="flex items-center justify-center gap-2">
             <Link href="/admin">
               <Button variant="ghost">Admin</Button>
             </Link>
-            <Button className="bg-red-500 text-white" onClick={handleSignOut}>
+            {/* <Button className="bg-red-500 text-white" onClick={handleSignOut}>
               Sign Out
-            </Button>
+            </Button> */}
+            <UserProfile />
           </div>
         ) : (
           <Link href="/sign-in">

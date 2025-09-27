@@ -7,7 +7,6 @@ import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
 import Cafes from "./cafes/page";
 import { ThreeDMarqueeDemo } from "@/components/ThreeDMarqueeDemo";
-import Image from "next/image";
 
 interface UserData {
   id: string;
@@ -19,7 +18,7 @@ interface UserData {
 
 export default function Page() {
   const supabase = createClientSupabase();
-  const [userData, setUserData] = useState<UserData | null>(null);
+
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const toastShown = useRef(false);
@@ -31,7 +30,6 @@ export default function Page() {
       } = await supabase.auth.getSession();
 
       if (!session?.user) {
-        setUserData(null);
         setError("You are not signed in.");
         setIsLoading(false);
         return;
@@ -46,7 +44,6 @@ export default function Page() {
 
       if (userError) {
         setError(userError.message);
-        setUserData(null);
       } else {
         let finalImage = data.image || "";
 
@@ -66,7 +63,6 @@ export default function Page() {
           }
         }
 
-        setUserData({ ...data, image: finalImage });
         setError(null);
 
         // Welcome toast
@@ -97,7 +93,7 @@ export default function Page() {
         toast.info("Signed out");
         toastShown.current = false;
         sessionStorage.removeItem("welcome-toast");
-        setUserData(null);
+
         setError("You are not signed in.");
         setIsLoading(false);
       }
@@ -136,24 +132,9 @@ export default function Page() {
 
   return (
     <div>
-      {userData && (
-        <div className="flex items-center gap-2 bg-green-50 px-3 py-2 rounded-lg border border-green-200 max-w-max">
-          {userData.image && (
-            <Image
-              src={userData.image}
-              alt="Avatar"
-              width={24}
-              height={24}
-              className="h-6 w-6 rounded-full"
-            />
-          )}
-          <span className="text-sm text-green-700 font-medium">
-            Welcome, {userData.full_name} 🚀
-          </span>
-        </div>
-      )}
       <ThreeDMarqueeDemo />
       <Cafes />
+      
     </div>
   );
 }
