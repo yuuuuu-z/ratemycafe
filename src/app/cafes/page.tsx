@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { createClientSupabase } from "@/utils/supabase/client";
+import { createSupabaseBrowser } from "@/lib/supabase/client";
 import { HoverEffect } from "@/components/ui/card-hover-effect";
 import { Input } from "@/components/ui/input";
 import {
@@ -36,12 +36,13 @@ export default function CafesPage() {
 
   useEffect(() => {
     const fetchCafes = async () => {
-      const supabase = createClientSupabase();
+      const supabase = createSupabaseBrowser();
       const { data, error } = await supabase.from("cafes").select("*");
 
       if (error) {
         console.error("Error fetching cafes:", error.message);
       } else {
+        console.log("Fetched cafes:", data);
         setCafes(data || []);
       }
     };
@@ -53,7 +54,8 @@ export default function CafesPage() {
     const fetchReviews = async () => {
       if (cafes.length === 0) return;
 
-      const supabase = createClientSupabase();
+      console.log("Fetching reviews for", cafes.length, "cafes");
+      const supabase = createSupabaseBrowser();
       const { data: reviewsData, error } = await supabase
         .from("reviews")
         .select("cafe_id, rating");
@@ -63,6 +65,7 @@ export default function CafesPage() {
         return;
       }
 
+      console.log("Fetched reviews:", reviewsData);
       if (reviewsData) {
         const reviewsByCafe = reviewsData.reduce(
           (acc: Record<string, Review[]>, review) => {
@@ -99,10 +102,12 @@ export default function CafesPage() {
       description: cafe.description,
       link: `/cafes/${cafe.id}`,
       image: cafe.image_url,
-      averageRating,
-      reviewCount: totalReviews,
+      review: averageRating, // average rating for display
+      rating: totalReviews, // number of reviews
     };
   });
+
+  console.log("Computed cafes:", computed);
 
   // apply search filter
   const searched = computed.filter((cafe) =>
@@ -116,14 +121,16 @@ export default function CafesPage() {
     finalList.sort((a, b) => a.title.localeCompare(b.title));
     // show all when sorting by name
   } else if (sortBy === "reviews") {
-    // Most Reviewed -> show only top N by reviewCount
-    finalList.sort((a, b) => b.reviewCount - a.reviewCount);
+    // Most Reviewed -> show only top N by rating (number of reviews)
+    finalList.sort((a, b) => b.rating - a.rating);
     finalList = finalList.slice(0, TOP_N);
   } else if (sortBy === "stars") {
-    // Highest Rated -> show only top N by averageRating
-    finalList.sort((a, b) => b.averageRating - a.averageRating);
+    // Highest Rated -> show only top N by review (average rating)
+    finalList.sort((a, b) => b.review - a.review);
     finalList = finalList.slice(0, TOP_N);
   }
+
+  console.log("Final list:", finalList);
 
   return (
     <div className="p-6">
@@ -190,8 +197,8 @@ export default function CafesPage() {
           description: cafe.description,
           link: cafe.link,
           image: cafe.image,
-          review: parseFloat(cafe.averageRating.toFixed(1)), // average stars shown on card
-          rating: cafe.reviewCount, // number of reviews shown on card
+          review: cafe.review, // average stars shown on card
+          rating: cafe.rating, // number of reviews shown on card
         }))}
       />
     </div>

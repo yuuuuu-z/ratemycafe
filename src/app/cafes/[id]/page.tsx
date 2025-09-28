@@ -1,6 +1,6 @@
 "use client";
 
-import { createClientSupabase } from "@/utils/supabase/client";
+import { createSupabaseBrowser } from "@/lib/supabase/client";
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import {
@@ -64,7 +64,7 @@ type Review = {
 };
 
 export default function CafeDetailPage({ params }: PageProps) {
-  const supabase = createClientSupabase();
+  const supabase = createSupabaseBrowser();
   const { id } = React.use(params);
 
   const [cafe, setCafe] = useState<Cafe | null>(null);

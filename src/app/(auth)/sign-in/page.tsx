@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { createClientSupabase } from "@/utils/supabase/client";
+import { createSupabaseBrowser } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -10,7 +10,7 @@ import { FcGoogle } from "react-icons/fc";
 import { toast } from "sonner";
 
 export default function Page() {
-  const supabase = createClientSupabase();
+  const supabase = createSupabaseBrowser();
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [email, setEmail] = useState("");
@@ -32,8 +32,8 @@ export default function Page() {
   }, [router, supabase]);
 
   const handleGoogleSignIn = async () => {
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
-    await supabase.auth.signInWithOAuth({
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || window.location.origin;
+    const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
         redirectTo: `${siteUrl}/auth/callback`,
@@ -42,6 +42,11 @@ export default function Page() {
         },
       },
     });
+
+    if (error) {
+      console.error("Google sign-in error:", error);
+      toast.error("Failed to sign in with Google: " + error.message);
+    }
   };
 
   const handleLogin = async () => {

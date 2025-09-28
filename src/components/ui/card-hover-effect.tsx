@@ -24,7 +24,7 @@ export const HoverEffect = ({
 }) => {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
-  // find the cafe with the highest average rating
+  // find the cafe with the most reviews
   const bestShop = items.reduce((best, item) => {
     return !best || item.review > best.review ? item : best;
   }, null as (typeof items)[0] | null);
@@ -123,7 +123,8 @@ export const HoverEffect = ({
                     item.rating > 0 ? "bg-green-500 text-white" : ""
                   )}
                 >
-                  {item.review} <Star size={18} />
+                  {item.review > 0 ? item.review.toFixed(1) : "0.0"}{" "}
+                  <Star size={18} />
                 </Button>
               </div>
             </Card>

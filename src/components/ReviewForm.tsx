@@ -2,7 +2,7 @@
 "use client";
 
 import { useState } from "react";
-import { createClientSupabase } from "@/utils/supabase/client";
+import { createSupabaseBrowser } from "@/lib/supabase/client";
 import { Star } from "lucide-react";
 import { Button } from "./ui/button";
 import { Textarea } from "./ui/textarea";
@@ -29,7 +29,7 @@ export const ReviewForm = ({ cafeId, onReviewSubmitted }: ReviewFormProps) => {
   const [rating, setRating] = useState<number>(0);
   const [comment, setComment] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const supabase = createClientSupabase();
+  const supabase = createSupabaseBrowser();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Carousel } from "./ui/carousel";
-import { createClientSupabase } from "@/utils/supabase/client";
+import { createSupabaseBrowser } from "@/lib/supabase/client";
 
 interface SlideData {
   src: string;
@@ -10,14 +10,14 @@ interface SlideData {
 
 export function ImageSlider({ cafeId }: { cafeId: string }) {
   const [slides, setSlides] = useState<SlideData[]>([]);
-  const supabase = createClientSupabase();
+  const supabase = createSupabaseBrowser();
 
   useEffect(() => {
     const fetchGallery = async () => {
       const { data, error } = await supabase
         .from("cafes")
         .select("gallery_urls")
-        
+
         .eq("id", cafeId)
         .single();
 

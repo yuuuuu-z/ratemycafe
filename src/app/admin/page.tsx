@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import type React from "react";
 
-import { createClientSupabase } from "@/utils/supabase/client";
+import { createSupabaseBrowser } from "@/lib/supabase/client";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import {
@@ -66,7 +66,7 @@ export default function AdminPage() {
   const [logoFile, setLogoFile] = useState<File | null>(null);
   const [logoUploading, setLogoUploading] = useState(false);
 
-  const supabase = createClientSupabase();
+  const supabase = createSupabaseBrowser();
 
   const [newCafe, setNewCafe] = useState({
     name: "",
@@ -512,7 +512,7 @@ export default function AdminPage() {
     };
 
     checkUser();
-  }, []);
+  }, [fetchCafes]);
 
   // Clear success message after 3 seconds
   useEffect(() => {

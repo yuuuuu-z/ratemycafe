@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import { createClientSupabase } from "@/utils/supabase/client";
+import { createSupabaseBrowser } from "@/lib/supabase/client";
 import { toast } from "sonner";
 
 import { Skeleton } from "@/components/ui/skeleton";
@@ -17,7 +17,7 @@ interface UserData {
 }
 
 export default function Page() {
-  const supabase = createClientSupabase();
+  const supabase = createSupabaseBrowser();
 
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -134,7 +134,6 @@ export default function Page() {
     <div>
       <ThreeDMarqueeDemo />
       <Cafes />
-      
     </div>
   );
 }

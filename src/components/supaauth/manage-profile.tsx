@@ -86,6 +86,12 @@ export default function ManageProfile() {
               <p className="text-sm">{data?.email}</p>
             </div>
           </div>
+          <div className="flex items-center sm:gap-24 py-5 justify-between ">
+            <h1 className="text-sm font-medium w-36">Name</h1>
+            <div className="flex-1 flex justify-between items-center sm:pl-3  ">
+              <p className="text-sm">{data?.user_metadata.full_name}</p>
+            </div>
+          </div>
           <div className="flex items-start py-5 gap-2 sm:gap-24 ">
             <h1 className="text-sm font-medium w-36  ">Connected accounts</h1>
             <div className="flex-1 space-y-5 ">

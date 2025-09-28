@@ -1,6 +1,6 @@
 "use client";
 
-import { createClientSupabase } from "@/utils/supabase/client";
+import { createSupabaseBrowser } from "@/lib/supabase/client";
 import { User } from "@supabase/supabase-js";
 import { useQuery } from "@tanstack/react-query";
 
@@ -9,7 +9,7 @@ export function useUser() {
     queryKey: ["user"],
     queryFn: async (): Promise<User | null> => {
       try {
-        const supabase = createClientSupabase();
+        const supabase = createSupabaseBrowser();
         const { data, error } = await supabase.auth.getUser();
 
         if (error) {

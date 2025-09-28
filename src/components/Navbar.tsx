@@ -4,13 +4,13 @@ import React, { useEffect, useState } from "react";
 import { Button } from "./ui/button";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { createClientSupabase } from "@/utils/supabase/client";
+import { createSupabaseBrowser } from "@/lib/supabase/client";
 // import { toast } from "sonner";
 import Logo from "./Logo";
-import UserProfile from "@/componentssupaauth/user-profile";
+import UserProfile from "@/components/supaauth/user-profile";
 
 export default function Navbar() {
-  const supabase = createClientSupabase();
+  const supabase = createSupabaseBrowser();
   const pathname = usePathname();
   // const router = useRouter();
   const [isLoggedIn, setIsLoggedIn] = useState(false);

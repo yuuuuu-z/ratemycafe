@@ -8,7 +8,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { IoMdSettings } from "react-icons/io";
 import { PiSignOutFill } from "react-icons/pi";
-import { createClientSupabase } from "@/utils/supabase/client";
+import { createSupabaseBrowser } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
@@ -24,7 +24,7 @@ export default function UserProfile() {
 
   const signout = () => {
     startSignOut(async () => {
-      const supabase = createClientSupabase();
+      const supabase = createSupabaseBrowser();
       await supabase.auth.signOut();
       router.push("/");
     });
@@ -33,27 +33,36 @@ export default function UserProfile() {
   return (
     <div className="w-full">
       <Popover>
-        <PopoverTrigger>
+        <PopoverTrigger className="focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 rounded-full">
           {data?.user_metadata?.avatar_url ? (
             <Image
-              className=" rounded-full"
+              className="rounded-full hover:opacity-80 transition-opacity"
               src={data?.user_metadata.avatar_url}
               alt="Avatar"
               width={40}
               height={40}
             />
-          ) : null}
+          ) : (
+            <div className="w-10 h-10 bg-gray-300 dark:bg-gray-600 rounded-full flex items-center justify-center">
+              <span className="text-gray-600 dark:text-gray-300 text-sm font-medium">
+                {data?.email?.charAt(0).toUpperCase() || "U"}
+              </span>
+            </div>
+          )}
         </PopoverTrigger>
-        <PopoverContent align="end" className="w-[90%] sm:w-[30rem]">
+        <PopoverContent
+          align="center"
+          className="w-[95%] max-w-[20rem] sm:w-[30rem] sm:max-w-none"
+        >
           <div
-            className={cn("flex gap-5 items-start w-[90%] sm:w-full", {
-              "animate-pulse": isSignOut,
+            className={cn("flex gap-3 sm:gap-5 items-start w-full", {
+              "animate-pulse ml-2 sm:ml-5": isSignOut,
             })}
           >
-            <div className="w-10">
+            <div className="flex-shrink-0">
               {data?.user_metadata?.avatar_url ? (
                 <Image
-                  className=" rounded-full"
+                  className="rounded-full"
                   src={data?.user_metadata.avatar_url}
                   alt="Avatar"
                   width={40}
@@ -61,31 +70,32 @@ export default function UserProfile() {
                 />
               ) : null}
             </div>
-            <div className="space-y-5 w-full flex-1">
+            <div className="space-y-3 sm:space-y-5 w-full flex-1 min-w-0">
               <div>
-                <h1>{data?.email}</h1>
+                <h1 className="text-sm sm:text-base truncate">{data?.email}</h1>
               </div>
 
-              <div className="flex gap-2 w-full pr-3 sm:pr-0">
+              <div className="flex flex-col sm:flex-row gap-2 w-full">
                 <Button
-                  className="w-1/2 h-9  rounded-xl flex items-center justify-center gap-2 text-gray-600 dark:text-gray-200 text-sm"
+                  className="w-full sm:w-1/2 h-9 rounded-xl flex items-center justify-center gap-2 text-gray-600 dark:text-gray-200 text-xs sm:text-sm"
                   variant="outline"
                   onClick={() => {
                     document.getElementById("manage-profile")?.click();
                   }}
                 >
-                  <IoMdSettings className="size-5" />
-                  Manage Account
+                  <IoMdSettings className="size-4 sm:size-5" />
+                  <span className="hidden xs:inline">Manage Account</span>
+                  <span className="xs:hidden">Manage</span>
                 </Button>
                 <Button
-                  className=" w-1/2 h-9  rounded-xl flex items-center justify-center gap-2 text-gray-600 dark:text-gray-200 text-sm"
+                  className="w-full sm:w-1/2 h-9 rounded-xl flex items-center justify-center gap-2 text-gray-600 dark:text-gray-200 text-xs sm:text-sm"
                   variant="outline"
                   onClick={signout}
                 >
                   {!isSignOut ? (
-                    <PiSignOutFill className="size-5" />
+                    <PiSignOutFill className="size-4 sm:size-5" />
                   ) : (
-                    <AiOutlineLoading3Quarters className="size-4 animate-spin" />
+                    <AiOutlineLoading3Quarters className="size-3 sm:size-4 animate-spin" />
                   )}
                   SignOut
                 </Button>
