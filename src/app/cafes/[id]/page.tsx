@@ -331,31 +331,46 @@ export default function CafeDetailPage({ params }: PageProps) {
                         </Button>
                       </DialogTrigger>
 
-                      <DialogContent className="motion-safe:animate-none">
-                        <DialogHeader>
-                          <DialogTitle>Edit your review</DialogTitle>
+                      <DialogContent className="motion-safe:animate-none max-w-lg p-5">
+                        <DialogHeader className="space-y-2">
+                          <DialogTitle className="text-xl font-semibold">
+                            Edit your review
+                          </DialogTitle>
+                          <p className="text-sm text-muted-foreground">
+                            Update your thoughts about this cafe
+                          </p>
                         </DialogHeader>
 
-                        <textarea
-                          value={editComments[review.id] || ""}
-                          onChange={(e) =>
-                            setEditComments((prev) => ({
-                              ...prev,
-                              [review.id]: e.target.value,
-                            }))
-                          }
-                          className="w-full mt-2 p-2 border rounded-md focus:outline-none focus:ring focus:ring-green-300 resize-none"
-                          rows={4}
-                          placeholder="Update your comment..."
-                        />
+                        <div className="space-y-4 py-4">
+                          <div className="space-y-2">
+                            <label className="text-sm font-medium text-foreground">
+                              Your comment
+                            </label>
+                            <textarea
+                              value={editComments[review.id] || ""}
+                              onChange={(e) =>
+                                setEditComments((prev) => ({
+                                  ...prev,
+                                  [review.id]: e.target.value,
+                                }))
+                              }
+                              className="w-full p-3 border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent resize-none bg-background text-foreground placeholder:text-muted-foreground transition-colors"
+                              rows={5}
+                              placeholder="Share your updated thoughts about this cafe..."
+                            />
+                          </div>
+                        </div>
 
-                        <DialogFooter className="gap-2">
+                        <DialogFooter className="flex gap-3 pt-4">
                           <DialogClose asChild>
-                            <Button variant="outline">Cancel</Button>
+                            <Button variant="outline" className="flex-1">
+                              Cancel
+                            </Button>
                           </DialogClose>
                           <Button
                             onClick={() => handleEdit(review)}
                             disabled={!editComments[review.id]?.trim()}
+                            className="flex-1 bg-primary hover:bg-primary/90"
                           >
                             Save Changes
                           </Button>
@@ -376,20 +391,25 @@ export default function CafeDetailPage({ params }: PageProps) {
                         </Button>
                       </AlertDialogTrigger>
 
-                      <AlertDialogContent className="motion-safe:animate-none">
-                        <AlertDialogHeader>
-                          <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                          <AlertDialogDescription>
-                            This action cannot be undone. This will permanently
-                            delete your review.
+                      <AlertDialogContent className="motion-safe:animate-none max-w-md">
+                        <AlertDialogHeader className="space-y-2">
+                          <AlertDialogTitle className="text-xl font-semibold">
+                            Delete Review
+                          </AlertDialogTitle>
+                          <AlertDialogDescription className="text-muted-foreground">
+                            Are you sure you want to delete this review? This
+                            action cannot be undone and will permanently remove
+                            your review from this cafe.
                           </AlertDialogDescription>
                         </AlertDialogHeader>
 
-                        <AlertDialogFooter>
-                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogFooter className="flex gap-3 pt-4">
+                          <AlertDialogCancel className="flex-1">
+                            Cancel
+                          </AlertDialogCancel>
                           <AlertDialogAction
                             onClick={() => handleDelete(review.id)}
-                            className="bg-red-600 hover:bg-red-700"
+                            className="flex-1 bg-destructive hover:bg-destructive/90"
                           >
                             Delete Review
                           </AlertDialogAction>

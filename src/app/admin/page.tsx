@@ -512,7 +512,7 @@ export default function AdminPage() {
     };
 
     checkUser();
-  }, [fetchCafes]);
+  }, []);
 
   // Clear success message after 3 seconds
   useEffect(() => {
