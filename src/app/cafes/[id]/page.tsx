@@ -2,6 +2,7 @@
 
 import { createSupabaseBrowser } from "@/lib/supabase/client";
 import { notFound } from "next/navigation";
+import ProtectedRoute from "@/components/ProtectedRoute";
 import Image from "next/image";
 import {
   BadgeCheckIcon,
@@ -177,252 +178,254 @@ export default function CafeDetailPage({ params }: PageProps) {
       : "0.0";
 
   return (
-    <div className="max-w-5xl w-full mx-auto px-4 pt-20 pb-12 text-[17px] leading-relaxed">
-      {/* Cafe Info */}
-      <div className="flex flex-col md:flex-row md:items-start md:gap-8 mb-12">
-        <div className="relative w-32 h-32 mb-4 md:mb-0 md:w-40 md:h-40">
-          <Image
-            src={cafe.image_url}
-            alt={cafe.name}
-            fill
-            className="object-contain rounded-full border border-gray-200 shadow-sm bg-gray-50"
-          />
+    <ProtectedRoute>
+      <div className="max-w-5xl w-full mx-auto px-4 pt-20 pb-12 text-[17px] leading-relaxed">
+        {/* Cafe Info */}
+        <div className="flex flex-col md:flex-row md:items-start md:gap-8 mb-12">
+          <div className="relative w-32 h-32 mb-4 md:mb-0 md:w-40 md:h-40">
+            <Image
+              src={cafe.image_url}
+              alt={cafe.name}
+              fill
+              className="object-contain rounded-full border border-gray-200 shadow-sm bg-gray-50"
+            />
+          </div>
+          <div className="flex flex-col">
+            <div>
+              <div className="text-4xl font-bold flex items-center gap-2">
+                {cafe.name}
+                <Badge className="bg-blue-500 text-white dark:bg-blue-600 mt-2">
+                  <BadgeCheckIcon /> Verified
+                </Badge>
+              </div>
+              <div className="text-lg mt-2 flex items-center gap-2">
+                <MapPinned size={15} color="green" /> {cafe.location}
+              </div>
+              <p className="mt-4 text-lg max-w-3xl">{cafe.description}</p>
+            </div>
+            <div>
+              <ImageSlider cafeId={id} />
+            </div>
+          </div>
         </div>
-        <div className="flex flex-col">
-          <div>
-            <div className="text-4xl font-bold flex items-center gap-2">
-              {cafe.name}
-              <Badge className="bg-blue-500 text-white dark:bg-blue-600 mt-2">
-                <BadgeCheckIcon /> Verified
+
+        {/* Reviews Section */}
+        <div className="mt-16">
+          <div className="flex flex-col gap-5 md:flex-row md:items-center justify-between mb-5 ">
+            <h2 className="text-3xl font-bold">Reviews</h2>
+
+            <div className="flex-wrap space-x-3 space-y-3 gap-3">
+              <Badge className="bg-purple-200/70 text-purple-800 px-3 py-1.5 text-sm font-medium rounded-full shadow-sm hover:bg-purple-500/30 hover:border-purple-400/50 transition-all duration-200  hover:shadow-green-500/25 group">
+                🍵 Taste
+              </Badge>
+              <Badge className="bg-blue-200/70 text-blue-800 px-3 py-1.5 text-sm font-medium rounded-full shadow-sm hover:bg-blue-500/30 hover:border-blue-400/50 transition-all duration-200  hover:shadow-green-500/25 group">
+                💻 Productivity
+              </Badge>
+              <Badge className="bg-green-200/70 text-green-800 px-3 py-1.5 text-sm font-medium rounded-full shadow-sm hover:bg-green-500/30 hover:border-green-400/50 transition-all duration-200  hover:shadow-green-500/25 group">
+                🌿 Environment
+              </Badge>
+              <Badge className="bg-red-200/70 text-red-800 px-3 py-1.5 text-sm font-medium rounded-full shadow-sm hover:bg-red-500/30 hover:border-red-400/50 transition-all duration-200  hover:shadow-green-500/25 group">
+                💰 Price
               </Badge>
             </div>
-            <div className="text-lg mt-2 flex items-center gap-2">
-              <MapPinned size={15} color="green" /> {cafe.location}
-            </div>
-            <p className="mt-4 text-lg max-w-3xl">{cafe.description}</p>
           </div>
-          <div>
-            <ImageSlider cafeId={id} />
-          </div>
-        </div>
-      </div>
 
-      {/* Reviews Section */}
-      <div className="mt-16">
-        <div className="flex flex-col gap-5 md:flex-row md:items-center justify-between mb-5 ">
-          <h2 className="text-3xl font-bold">Reviews</h2>
-
-          <div className="flex-wrap space-x-3 space-y-3 gap-3">
-            <Badge className="bg-purple-200/70 text-purple-800 px-3 py-1.5 text-sm font-medium rounded-full shadow-sm hover:bg-purple-500/30 hover:border-purple-400/50 transition-all duration-200  hover:shadow-green-500/25 group">
-              🍵 Taste
-            </Badge>
-            <Badge className="bg-blue-200/70 text-blue-800 px-3 py-1.5 text-sm font-medium rounded-full shadow-sm hover:bg-blue-500/30 hover:border-blue-400/50 transition-all duration-200  hover:shadow-green-500/25 group">
-              💻 Productivity
-            </Badge>
-            <Badge className="bg-green-200/70 text-green-800 px-3 py-1.5 text-sm font-medium rounded-full shadow-sm hover:bg-green-500/30 hover:border-green-400/50 transition-all duration-200  hover:shadow-green-500/25 group">
-              🌿 Environment
-            </Badge>
-            <Badge className="bg-red-200/70 text-red-800 px-3 py-1.5 text-sm font-medium rounded-full shadow-sm hover:bg-red-500/30 hover:border-red-400/50 transition-all duration-200  hover:shadow-green-500/25 group">
-              💰 Price
-            </Badge>
-          </div>
-        </div>
-
-        <div className="flex flex-col gap-8 md:flex-row md:items-start md:justify-between border-t border-gray-200 dark:border-gray-700 pt-8">
-          {/* Stats */}
-          <div className="flex gap-16">
-            <div>
-              <p className="text-base">Total Reviews</p>
-              <p className="text-2xl font-semibold">{totalReviews}</p>
+          <div className="flex flex-col gap-8 md:flex-row md:items-start md:justify-between border-t border-gray-200 dark:border-gray-700 pt-8">
+            {/* Stats */}
+            <div className="flex gap-16">
+              <div>
+                <p className="text-base">Total Reviews</p>
+                <p className="text-2xl font-semibold">{totalReviews}</p>
+              </div>
+              <div>
+                <p className="text-base">Average Rating</p>
+                <p className="text-2xl font-semibold">{averageRating}</p>
+              </div>
             </div>
-            <div>
-              <p className="text-base">Average Rating</p>
-              <p className="text-2xl font-semibold">{averageRating}</p>
-            </div>
-          </div>
-          {/* Rating Legend */}
-          <div className="flex flex-col gap-3 text-base mt-2 md:mt-0">
-            {[5, 4, 3, 2, 1].map((rating) => (
-              <div key={rating} className="flex items-center gap-2">
-                <Star
-                  className={
-                    [
-                      "text-green-600",
-                      "text-green-400",
-                      "text-yellow-500",
-                      "text-orange-500",
-                      "text-red-500",
-                    ][5 - rating]
+            {/* Rating Legend */}
+            <div className="flex flex-col gap-3 text-base mt-2 md:mt-0">
+              {[5, 4, 3, 2, 1].map((rating) => (
+                <div key={rating} className="flex items-center gap-2">
+                  <Star
+                    className={
+                      [
+                        "text-green-600",
+                        "text-green-400",
+                        "text-yellow-500",
+                        "text-orange-500",
+                        "text-red-500",
+                      ][5 - rating]
+                    }
+                  />
+                  {
+                    ["Excellent", "Good", "Average", "Below Average", "Poor"][
+                      5 - rating
+                    ]
                   }
-                />
-                {
-                  ["Excellent", "Good", "Average", "Below Average", "Poor"][
-                    5 - rating
-                  ]
-                }
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="my-20">
+            <ReviewForm
+              cafeId={id}
+              onReviewSubmitted={(newReview) => {
+                setReviews((prev) => [newReview, ...prev]);
+              }}
+            />
+          </div>
+
+          {/* Review List */}
+          <div className="mt-12 flex flex-col gap-8">
+            {reviews.map((review) => (
+              <div
+                key={review.id}
+                className="border-t border-gray-200 dark:border-gray-700 pt-6"
+              >
+                <div className="flex flex-col gap-4">
+                  {/* Review Header */}
+                  <div className="flex gap-2 items-center">
+                    <Badge
+                      variant="outline"
+                      className="h-5 min-w-5 rounded-full px-4 py-3 tabular-nums bg-blue-500/20 backdrop-blur-sm border border-blue-300/30 dark:text-white shadow-lg"
+                    >
+                      <span className="font-semibold">{review.rating}</span>
+                      <Star className="text-yellow-400 fill-yellow-400" />
+                      <span className="text-sm flex gap-2">
+                        from{" "}
+                        <p className="font-bold">
+                          {review.user?.full_name ?? "Anonymous"}
+                        </p>
+                      </span>
+                      <span className="text-sm text-gray-500 dark:text-gray-400 ml-4">
+                        {new Date(review.created_at).toLocaleDateString()}
+                      </span>
+                    </Badge>
+                  </div>
+
+                  {/* Comment */}
+                  <div className=" py-2">
+                    <p>{review.comment}</p>
+                  </div>
+
+                  {/* User actions - Only show if current user owns this review */}
+                  {currentUser?.id === review.user_id && (
+                    <div className="flex gap-3 mt-2">
+                      {/* Edit Dialog */}
+                      <Dialog
+                        open={openDialogs[review.id] ?? false}
+                        onOpenChange={(isOpen) =>
+                          setOpenDialogs((prev) => ({
+                            ...prev,
+                            [review.id]: isOpen,
+                          }))
+                        }
+                      >
+                        <DialogTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="bg-green-500/20 backdrop-blur-sm border border-green-300/30 hover:bg-green-500/30 hover:border-green-400/50 transition-all duration-200 shadow-lg hover:shadow-green-500/25 group"
+                          >
+                            <EditIcon className="w-3 h-3 group-hover:rotate-12 transition-transform duration-200" />
+                            Edit
+                          </Button>
+                        </DialogTrigger>
+
+                        <DialogContent className="motion-safe:animate-none max-w-lg p-5">
+                          <DialogHeader className="space-y-2">
+                            <DialogTitle className="text-xl font-semibold">
+                              Edit your review
+                            </DialogTitle>
+                            <p className="text-sm text-muted-foreground">
+                              Update your thoughts about this cafe
+                            </p>
+                          </DialogHeader>
+
+                          <div className="space-y-4 py-4">
+                            <div className="space-y-2">
+                              <label className="text-sm font-medium text-foreground">
+                                Your comment
+                              </label>
+                              <textarea
+                                value={editComments[review.id] || ""}
+                                onChange={(e) =>
+                                  setEditComments((prev) => ({
+                                    ...prev,
+                                    [review.id]: e.target.value,
+                                  }))
+                                }
+                                className="w-full p-3 border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent resize-none bg-background text-foreground placeholder:text-muted-foreground transition-colors"
+                                rows={5}
+                                placeholder="Share your updated thoughts about this cafe..."
+                              />
+                            </div>
+                          </div>
+
+                          <DialogFooter className="flex gap-3 pt-4">
+                            <DialogClose asChild>
+                              <Button variant="outline" className="flex-1">
+                                Cancel
+                              </Button>
+                            </DialogClose>
+                            <Button
+                              onClick={() => handleEdit(review)}
+                              disabled={!editComments[review.id]?.trim()}
+                              className="flex-1 bg-primary hover:bg-primary/90"
+                            >
+                              Save Changes
+                            </Button>
+                          </DialogFooter>
+                        </DialogContent>
+                      </Dialog>
+
+                      {/* Delete Alert Dialog */}
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="bg-gradient-to-r from-red-500/20 to-pink-500/20 backdrop-blur-sm border border-red-300/30 dark:text-red-200 hover:from-red-500/30 hover:to-pink-500/30 hover:border-red-400/50 transition-all duration-200 shadow-lg hover:shadow-red-500/25 group"
+                          >
+                            <Trash2 className="w-3 h-3 group-hover:scale-110 transition-transform duration-200" />
+                            Delete
+                          </Button>
+                        </AlertDialogTrigger>
+
+                        <AlertDialogContent className="motion-safe:animate-none max-w-md">
+                          <AlertDialogHeader className="space-y-2">
+                            <AlertDialogTitle className="text-xl font-semibold">
+                              Delete Review
+                            </AlertDialogTitle>
+                            <AlertDialogDescription className="text-muted-foreground">
+                              Are you sure you want to delete this review? This
+                              action cannot be undone and will permanently
+                              remove your review from this cafe.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+
+                          <AlertDialogFooter className="flex gap-3 pt-4">
+                            <AlertDialogCancel className="flex-1">
+                              Cancel
+                            </AlertDialogCancel>
+                            <AlertDialogAction
+                              onClick={() => handleDelete(review.id)}
+                              className="flex-1 bg-destructive hover:bg-destructive/90"
+                            >
+                              Delete Review
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    </div>
+                  )}
+                </div>
               </div>
             ))}
           </div>
         </div>
-
-        <div className="my-20">
-          <ReviewForm
-            cafeId={id}
-            onReviewSubmitted={(newReview) => {
-              setReviews((prev) => [newReview, ...prev]);
-            }}
-          />
-        </div>
-
-        {/* Review List */}
-        <div className="mt-12 flex flex-col gap-8">
-          {reviews.map((review) => (
-            <div
-              key={review.id}
-              className="border-t border-gray-200 dark:border-gray-700 pt-6"
-            >
-              <div className="flex flex-col gap-4">
-                {/* Review Header */}
-                <div className="flex gap-2 items-center">
-                  <Badge
-                    variant="outline"
-                    className="h-5 min-w-5 rounded-full px-4 py-3 tabular-nums bg-blue-500/20 backdrop-blur-sm border border-blue-300/30 dark:text-white shadow-lg"
-                  >
-                    <span className="font-semibold">{review.rating}</span>
-                    <Star className="text-yellow-400 fill-yellow-400" />
-                    <span className="text-sm flex gap-2">
-                      from{" "}
-                      <p className="font-bold">
-                        {review.user?.full_name ?? "Anonymous"}
-                      </p>
-                    </span>
-                    <span className="text-sm text-gray-500 dark:text-gray-400 ml-4">
-                      {new Date(review.created_at).toLocaleDateString()}
-                    </span>
-                  </Badge>
-                </div>
-
-                {/* Comment */}
-                <div className=" py-2">
-                  <p>{review.comment}</p>
-                </div>
-
-                {/* User actions - Only show if current user owns this review */}
-                {currentUser?.id === review.user_id && (
-                  <div className="flex gap-3 mt-2">
-                    {/* Edit Dialog */}
-                    <Dialog
-                      open={openDialogs[review.id] ?? false}
-                      onOpenChange={(isOpen) =>
-                        setOpenDialogs((prev) => ({
-                          ...prev,
-                          [review.id]: isOpen,
-                        }))
-                      }
-                    >
-                      <DialogTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="bg-green-500/20 backdrop-blur-sm border border-green-300/30 hover:bg-green-500/30 hover:border-green-400/50 transition-all duration-200 shadow-lg hover:shadow-green-500/25 group"
-                        >
-                          <EditIcon className="w-3 h-3 group-hover:rotate-12 transition-transform duration-200" />
-                          Edit
-                        </Button>
-                      </DialogTrigger>
-
-                      <DialogContent className="motion-safe:animate-none max-w-lg p-5">
-                        <DialogHeader className="space-y-2">
-                          <DialogTitle className="text-xl font-semibold">
-                            Edit your review
-                          </DialogTitle>
-                          <p className="text-sm text-muted-foreground">
-                            Update your thoughts about this cafe
-                          </p>
-                        </DialogHeader>
-
-                        <div className="space-y-4 py-4">
-                          <div className="space-y-2">
-                            <label className="text-sm font-medium text-foreground">
-                              Your comment
-                            </label>
-                            <textarea
-                              value={editComments[review.id] || ""}
-                              onChange={(e) =>
-                                setEditComments((prev) => ({
-                                  ...prev,
-                                  [review.id]: e.target.value,
-                                }))
-                              }
-                              className="w-full p-3 border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent resize-none bg-background text-foreground placeholder:text-muted-foreground transition-colors"
-                              rows={5}
-                              placeholder="Share your updated thoughts about this cafe..."
-                            />
-                          </div>
-                        </div>
-
-                        <DialogFooter className="flex gap-3 pt-4">
-                          <DialogClose asChild>
-                            <Button variant="outline" className="flex-1">
-                              Cancel
-                            </Button>
-                          </DialogClose>
-                          <Button
-                            onClick={() => handleEdit(review)}
-                            disabled={!editComments[review.id]?.trim()}
-                            className="flex-1 bg-primary hover:bg-primary/90"
-                          >
-                            Save Changes
-                          </Button>
-                        </DialogFooter>
-                      </DialogContent>
-                    </Dialog>
-
-                    {/* Delete Alert Dialog */}
-                    <AlertDialog>
-                      <AlertDialogTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="bg-gradient-to-r from-red-500/20 to-pink-500/20 backdrop-blur-sm border border-red-300/30 dark:text-red-200 hover:from-red-500/30 hover:to-pink-500/30 hover:border-red-400/50 transition-all duration-200 shadow-lg hover:shadow-red-500/25 group"
-                        >
-                          <Trash2 className="w-3 h-3 group-hover:scale-110 transition-transform duration-200" />
-                          Delete
-                        </Button>
-                      </AlertDialogTrigger>
-
-                      <AlertDialogContent className="motion-safe:animate-none max-w-md">
-                        <AlertDialogHeader className="space-y-2">
-                          <AlertDialogTitle className="text-xl font-semibold">
-                            Delete Review
-                          </AlertDialogTitle>
-                          <AlertDialogDescription className="text-muted-foreground">
-                            Are you sure you want to delete this review? This
-                            action cannot be undone and will permanently remove
-                            your review from this cafe.
-                          </AlertDialogDescription>
-                        </AlertDialogHeader>
-
-                        <AlertDialogFooter className="flex gap-3 pt-4">
-                          <AlertDialogCancel className="flex-1">
-                            Cancel
-                          </AlertDialogCancel>
-                          <AlertDialogAction
-                            onClick={() => handleDelete(review.id)}
-                            className="flex-1 bg-destructive hover:bg-destructive/90"
-                          >
-                            Delete Review
-                          </AlertDialogAction>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialog>
-                  </div>
-                )}
-              </div>
-            </div>
-          ))}
-        </div>
       </div>
-    </div>
+    </ProtectedRoute>
   );
 }

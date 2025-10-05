@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
 import Cafes from "./cafes/page";
 import { ThreeDMarqueeDemo } from "@/components/ThreeDMarqueeDemo";
+import ProtectedRoute from "@/components/ProtectedRoute";
 
 interface UserData {
   id: string;
@@ -131,9 +132,12 @@ export default function Page() {
     );
 
   return (
-    <div>
-      <ThreeDMarqueeDemo />
-      <Cafes />
-    </div>
+    <ProtectedRoute>
+      <div>
+        <ThreeDMarqueeDemo />
+
+        <Cafes />
+      </div>
+    </ProtectedRoute>
   );
 }

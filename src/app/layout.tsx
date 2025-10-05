@@ -33,9 +33,12 @@ export default function RootLayout({
           <QueryProvider>
             <main className="max-w-6xl mx-auto min-h-screen px-5 flex flex-col">
               <NextTopLoader showSpinner={false} color="black" />
+
               <Navbar />
               {children}
+
               <Footer />
+
               <Toaster richColors />
             </main>
           </QueryProvider>

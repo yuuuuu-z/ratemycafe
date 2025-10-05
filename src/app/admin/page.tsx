@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import type React from "react";
 
 import { createSupabaseBrowser } from "@/lib/supabase/client";
+import ProtectedRoute from "@/components/ProtectedRoute";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import {
@@ -568,174 +569,184 @@ export default function AdminPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="container mx-auto p-6 max-w-7xl">
-        <Card className="mb-8">
-          <CardHeader>
-            <div className="flex justify-between items-center">
-              <div>
-                <CardTitle className="text-4xl mb-2">Admin Dashboard</CardTitle>
-                <CardDescription className="text-base">
-                  Manage your cafe listings and gallery
-                </CardDescription>
+    <ProtectedRoute>
+      <div className="min-h-screen bg-background">
+        <div className="container mx-auto p-6 max-w-7xl">
+          <Card className="mb-8">
+            <CardHeader>
+              <div className="flex justify-between items-center">
+                <div>
+                  <CardTitle className="text-4xl mb-2">
+                    Admin Dashboard
+                  </CardTitle>
+                  <CardDescription className="text-base">
+                    Manage your cafe listings and gallery
+                  </CardDescription>
+                </div>
               </div>
-            </div>
-          </CardHeader>
-        </Card>
+            </CardHeader>
+          </Card>
 
-        {error && (
-          <Alert variant="destructive" className="mb-6">
-            <svg
-              className="w-4 h-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
-            </svg>
-            <AlertDescription className="flex justify-between items-center">
-              <span>{error}</span>
-              <Button variant="ghost" size="sm" onClick={() => setError(null)}>
-                ×
-              </Button>
-            </AlertDescription>
-          </Alert>
-        )}
-        {success && (
-          <Alert className="mb-6 border-green-200 bg-green-50 text-green-800">
-            <svg
-              className="w-4 h-4 text-green-600"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
-            </svg>
-            <AlertDescription className="flex justify-between items-center text-green-800">
-              <span>{success}</span>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setSuccess(null)}
+          {error && (
+            <Alert variant="destructive" className="mb-6">
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
               >
-                ×
-              </Button>
-            </AlertDescription>
-          </Alert>
-        )}
-
-        <Card className="mb-8">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
-                <svg
-                  className="w-5 h-5 text-primary-foreground"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+              <AlertDescription className="flex justify-between items-center">
+                <span>{error}</span>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setError(null)}
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-                  />
-                </svg>
-              </div>
-              {editingCafe ? "Edit Cafe" : "Add New Cafe"}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl">
-              <div className="space-y-2">
-                <Label htmlFor="name">Cafe Name *</Label>
-                <Input
-                  id="name"
-                  placeholder="Enter cafe name"
-                  value={newCafe.name}
-                  onChange={(e) =>
-                    setNewCafe({ ...newCafe, name: e.target.value })
-                  }
-                  disabled={isSubmitting}
+                  ×
+                </Button>
+              </AlertDescription>
+            </Alert>
+          )}
+          {success && (
+            <Alert className="mb-6 border-green-200 bg-green-50 text-green-800">
+              <svg
+                className="w-4 h-4 text-green-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
                 />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="location">Location</Label>
-                <Input
-                  id="location"
-                  placeholder="Enter cafe location"
-                  value={newCafe.location}
-                  onChange={(e) =>
-                    setNewCafe({ ...newCafe, location: e.target.value })
-                  }
-                  disabled={isSubmitting}
-                />
-              </div>
-              <div className="md:col-span-2 space-y-2">
-                <Label htmlFor="description">Description</Label>
-                <Textarea
-                  id="description"
-                  placeholder="Enter cafe description"
-                  rows={3}
-                  value={newCafe.description}
-                  onChange={(e) =>
-                    setNewCafe({ ...newCafe, description: e.target.value })
-                  }
-                  disabled={isSubmitting}
-                />
-              </div>
-              <div className="md:col-span-2 space-y-4">
-                <Label>Logo Image *</Label>
-                <div className="space-y-3">
-                  <div className="space-y-2">
-                    <Label htmlFor="logo_file" className="text-sm font-medium">
-                      Upload Logo Image
-                    </Label>
-                    <Input
-                      id="logo_file"
-                      type="file"
-                      accept="image/*"
-                      onChange={handleLogoFileSelect}
-                      disabled={isSubmitting || logoUploading}
-                      className="file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-primary-foreground hover:file:bg-primary/90"
+              </svg>
+              <AlertDescription className="flex justify-between items-center text-green-800">
+                <span>{success}</span>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setSuccess(null)}
+                >
+                  ×
+                </Button>
+              </AlertDescription>
+            </Alert>
+          )}
+
+          <Card className="mb-8">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+                  <svg
+                    className="w-5 h-5 text-primary-foreground"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 6v6m0 0v6m0-6h6m-6 0H6"
                     />
-                    {logoFile && (
-                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <svg
-                          className="w-4 h-4"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                          />
-                        </svg>
-                        Selected: {logoFile.name}
-                      </div>
-                    )}
-                  </div>
+                  </svg>
+                </div>
+                {editingCafe ? "Edit Cafe" : "Add New Cafe"}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl">
+                <div className="space-y-2">
+                  <Label htmlFor="name">Cafe Name *</Label>
+                  <Input
+                    id="name"
+                    placeholder="Enter cafe name"
+                    value={newCafe.name}
+                    onChange={(e) =>
+                      setNewCafe({ ...newCafe, name: e.target.value })
+                    }
+                    disabled={isSubmitting}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="location">Location</Label>
+                  <Input
+                    id="location"
+                    placeholder="Enter cafe location"
+                    value={newCafe.location}
+                    onChange={(e) =>
+                      setNewCafe({ ...newCafe, location: e.target.value })
+                    }
+                    disabled={isSubmitting}
+                  />
+                </div>
+                <div className="md:col-span-2 space-y-2">
+                  <Label htmlFor="description">Description</Label>
+                  <Textarea
+                    id="description"
+                    placeholder="Enter cafe description"
+                    rows={3}
+                    value={newCafe.description}
+                    onChange={(e) =>
+                      setNewCafe({ ...newCafe, description: e.target.value })
+                    }
+                    disabled={isSubmitting}
+                  />
+                </div>
+                <div className="md:col-span-2 space-y-4">
+                  <Label>Logo Image *</Label>
+                  <div className="space-y-3">
+                    <div className="space-y-2">
+                      <Label
+                        htmlFor="logo_file"
+                        className="text-sm font-medium"
+                      >
+                        Upload Logo Image
+                      </Label>
+                      <Input
+                        id="logo_file"
+                        type="file"
+                        accept="image/*"
+                        onChange={handleLogoFileSelect}
+                        disabled={isSubmitting || logoUploading}
+                        className="file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-primary-foreground hover:file:bg-primary/90"
+                      />
+                      {logoFile && (
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                          <svg
+                            className="w-4 h-4"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                            />
+                          </svg>
+                          Selected: {logoFile.name}
+                        </div>
+                      )}
+                    </div>
 
-                  <div className="flex items-center gap-3">
-                    <div className="flex-1 h-px bg-border"></div>
-                    <span className="text-xs text-muted-foreground">OR</span>
-                    <div className="flex-1 h-px bg-border"></div>
-                  </div>
+                    <div className="flex items-center gap-3">
+                      <div className="flex-1 h-px bg-border"></div>
+                      <span className="text-xs text-muted-foreground">OR</span>
+                      <div className="flex-1 h-px bg-border"></div>
+                    </div>
 
-                  {/* <div className="space-y-2">
+                    {/* <div className="space-y-2">
                     <Label htmlFor="image_url" className="text-sm font-medium">
                       Logo Image URL (optional)
                     </Label>
@@ -754,13 +765,58 @@ export default function AdminPage() {
                       </p>
                     )}
                   </div> */}
+                  </div>
                 </div>
-              </div>
-              <div className="md:col-span-2 flex gap-3 pt-4">
-                {editingCafe ? (
-                  <>
+                <div className="md:col-span-2 flex gap-3 pt-4">
+                  {editingCafe ? (
+                    <>
+                      <Button
+                        onClick={() => updateCafe(editingCafe)}
+                        disabled={isSubmitting || logoUploading}
+                        size="lg"
+                      >
+                        {isSubmitting || logoUploading ? (
+                          <>
+                            <svg
+                              className="animate-spin -ml-1 mr-3 h-4 w-4"
+                              xmlns="http://www.w3.org/2000/svg"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                            >
+                              <circle
+                                className="opacity-25"
+                                cx="12"
+                                cy="12"
+                                r="10"
+                                stroke="currentColor"
+                                strokeWidth="4"
+                              ></circle>
+                              <path
+                                className="opacity-75"
+                                fill="currentColor"
+                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                              ></path>
+                            </svg>
+                            {logoUploading
+                              ? "Uploading Logo..."
+                              : "Updating..."}
+                          </>
+                        ) : (
+                          "Update Cafe"
+                        )}
+                      </Button>
+                      <Button
+                        onClick={cancelEdit}
+                        disabled={isSubmitting || logoUploading}
+                        variant="secondary"
+                        size="lg"
+                      >
+                        Cancel
+                      </Button>
+                    </>
+                  ) : (
                     <Button
-                      onClick={() => updateCafe(editingCafe)}
+                      onClick={addCafe}
                       disabled={isSubmitting || logoUploading}
                       size="lg"
                     >
@@ -786,88 +842,24 @@ export default function AdminPage() {
                               d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                             ></path>
                           </svg>
-                          {logoUploading ? "Uploading Logo..." : "Updating..."}
+                          {logoUploading ? "Uploading Logo..." : "Adding..."}
                         </>
                       ) : (
-                        "Update Cafe"
+                        "Add Cafe"
                       )}
                     </Button>
-                    <Button
-                      onClick={cancelEdit}
-                      disabled={isSubmitting || logoUploading}
-                      variant="secondary"
-                      size="lg"
-                    >
-                      Cancel
-                    </Button>
-                  </>
-                ) : (
-                  <Button
-                    onClick={addCafe}
-                    disabled={isSubmitting || logoUploading}
-                    size="lg"
-                  >
-                    {isSubmitting || logoUploading ? (
-                      <>
-                        <svg
-                          className="animate-spin -ml-1 mr-3 h-4 w-4"
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                        >
-                          <circle
-                            className="opacity-25"
-                            cx="12"
-                            cy="12"
-                            r="10"
-                            stroke="currentColor"
-                            strokeWidth="4"
-                          ></circle>
-                          <path
-                            className="opacity-75"
-                            fill="currentColor"
-                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                          ></path>
-                        </svg>
-                        {logoUploading ? "Uploading Logo..." : "Adding..."}
-                      </>
-                    ) : (
-                      "Add Cafe"
-                    )}
-                  </Button>
-                )}
+                  )}
+                </div>
               </div>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-secondary rounded-lg flex items-center justify-center">
-                <svg
-                  className="w-5 h-5 text-secondary-foreground"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
-                  />
-                </svg>
-              </div>
-              All Cafes Lists ({cafes.length})
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="p-0">
-            {cafes.length === 0 ? (
-              <div className="text-center py-16 px-6">
-                <div className="w-24 h-24 bg-muted rounded-full flex items-center justify-center mx-auto mb-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-secondary rounded-lg flex items-center justify-center">
                   <svg
-                    className="w-12 h-12 text-muted-foreground"
+                    className="w-5 h-5 text-secondary-foreground"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -880,174 +872,195 @@ export default function AdminPage() {
                     />
                   </svg>
                 </div>
-                <CardTitle className="text-xl mb-2">No cafes found</CardTitle>
-                <CardDescription>
-                  Add your first cafe above to get started!
-                </CardDescription>
-              </div>
-            ) : (
-              <>
-                <div className="border-b">
-                  <Table>
-                    <TableHeader>
-                      <TableRow className="hover:bg-transparent border-b">
-                        <TableHead className="w-12"></TableHead>
-                        <TableHead className="font-semibold text-foreground">
-                          Name
-                        </TableHead>
-                        <TableHead className="font-semibold text-foreground">
-                          Location
-                        </TableHead>
-                        <TableHead className="font-semibold text-foreground">
-                          Status
-                        </TableHead>
-                        <TableHead className="font-semibold text-foreground">
-                          Gallery
-                        </TableHead>
-                        <TableHead className="font-semibold text-foreground ">
-                          Actions
-                        </TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {cafes.map((cafe) => (
-                        <TableRow
-                          key={cafe.id}
-                          className="hover:bg-muted/50 border-b border-border/40"
-                        >
-                          <TableCell className="w-12">
-                            <div className="flex items-center justify-center text-muted-foreground cursor-grab hover:text-foreground transition-colors">
-                              <svg
-                                className="w-4 h-4"
-                                fill="currentColor"
-                                viewBox="0 0 24 24"
-                              >
-                                <circle cx="9" cy="12" r="1" />
-                                <circle cx="9" cy="5" r="1" />
-                                <circle cx="9" cy="19" r="1" />
-                                <circle cx="15" cy="12" r="1" />
-                                <circle cx="15" cy="5" r="1" />
-                                <circle cx="15" cy="19" r="1" />
-                              </svg>
-                            </div>
-                          </TableCell>
-                          <TableCell>
-                            <div className="flex items-center gap-3">
-                              <Image
-                                src={cafe.image_url || "/placeholder.svg"}
-                                alt={cafe.name}
-                                width={40}
-                                height={40}
-                                className="w-10 h-10 object-cover rounded-lg border"
-                                onError={(e) => {
-                                  const target = e.target as HTMLImageElement;
-                                  target.src = "/placeholder-image.png";
-                                }}
-                              />
-                              <div>
-                                <div className="font-medium text-foreground">
-                                  {cafe.name}
-                                </div>
-                                <div className="text-sm text-muted-foreground line-clamp-1 max-w-xs">
-                                  {cafe.description || "No description"}
+                All Cafes Lists ({cafes.length})
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-0">
+              {cafes.length === 0 ? (
+                <div className="text-center py-16 px-6">
+                  <div className="w-24 h-24 bg-muted rounded-full flex items-center justify-center mx-auto mb-6">
+                    <svg
+                      className="w-12 h-12 text-muted-foreground"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
+                      />
+                    </svg>
+                  </div>
+                  <CardTitle className="text-xl mb-2">No cafes found</CardTitle>
+                  <CardDescription>
+                    Add your first cafe above to get started!
+                  </CardDescription>
+                </div>
+              ) : (
+                <>
+                  <div className="border-b">
+                    <Table>
+                      <TableHeader>
+                        <TableRow className="hover:bg-transparent border-b">
+                          <TableHead className="w-12"></TableHead>
+                          <TableHead className="font-semibold text-foreground">
+                            Name
+                          </TableHead>
+                          <TableHead className="font-semibold text-foreground">
+                            Location
+                          </TableHead>
+                          <TableHead className="font-semibold text-foreground">
+                            Status
+                          </TableHead>
+                          <TableHead className="font-semibold text-foreground">
+                            Gallery
+                          </TableHead>
+                          <TableHead className="font-semibold text-foreground ">
+                            Actions
+                          </TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {cafes.map((cafe) => (
+                          <TableRow
+                            key={cafe.id}
+                            className="hover:bg-muted/50 border-b border-border/40"
+                          >
+                            <TableCell className="w-12">
+                              <div className="flex items-center justify-center text-muted-foreground cursor-grab hover:text-foreground transition-colors">
+                                <svg
+                                  className="w-4 h-4"
+                                  fill="currentColor"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <circle cx="9" cy="12" r="1" />
+                                  <circle cx="9" cy="5" r="1" />
+                                  <circle cx="9" cy="19" r="1" />
+                                  <circle cx="15" cy="12" r="1" />
+                                  <circle cx="15" cy="5" r="1" />
+                                  <circle cx="15" cy="19" r="1" />
+                                </svg>
+                              </div>
+                            </TableCell>
+                            <TableCell>
+                              <div className="flex items-center gap-3">
+                                <Image
+                                  src={cafe.image_url || "/placeholder.svg"}
+                                  alt={cafe.name}
+                                  width={40}
+                                  height={40}
+                                  className="w-10 h-10 object-cover rounded-lg border"
+                                  onError={(e) => {
+                                    const target = e.target as HTMLImageElement;
+                                    target.src = "/placeholder-image.png";
+                                  }}
+                                />
+                                <div>
+                                  <div className="font-medium text-foreground">
+                                    {cafe.name}
+                                  </div>
+                                  <div className="text-sm text-muted-foreground line-clamp-1 max-w-xs">
+                                    {cafe.description || "No description"}
+                                  </div>
                                 </div>
                               </div>
-                            </div>
-                          </TableCell>
-                          <TableCell>
-                            <Badge>{cafe.location || "No location"}</Badge>
-                          </TableCell>
-                          <TableCell>
-                            <Badge
-                              variant="secondary"
-                              className="bg-green-100 text-green-800 hover:bg-green-100 border-green-200"
-                            >
-                              <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
-                              Verified
-                            </Badge>
-                          </TableCell>
-                          <TableCell>
-                            <Badge className="h-5 min-w-5 bg-blue-500 rounded-full px-1 ml-3 font-mono tabular-nums">
-                              <span className="">
-                                {cafe.gallery_urls?.length || 0}
-                              </span>
-                            </Badge>
-                          </TableCell>
-                          <TableCell>
-                            <div className="flex items-center gap-2">
-                              <Button
-                                onClick={() => startEdit(cafe)}
-                                disabled={isSubmitting}
-                                size="sm"
-                                variant="ghost"
-                                className="h-8 w-8 p-0"
+                            </TableCell>
+                            <TableCell>
+                              <Badge>{cafe.location || "No location"}</Badge>
+                            </TableCell>
+                            <TableCell>
+                              <Badge
+                                variant="secondary"
+                                className="bg-green-100 text-green-800 hover:bg-green-100 border-green-200"
                               >
-                                <svg
-                                  className="w-4 h-4"
-                                  fill="none"
-                                  stroke="currentColor"
-                                  viewBox="0 0 24 24"
+                                <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+                                Verified
+                              </Badge>
+                            </TableCell>
+                            <TableCell>
+                              <Badge className="h-5 min-w-5 bg-blue-500 rounded-full px-1 ml-3 font-mono tabular-nums">
+                                <span className="">
+                                  {cafe.gallery_urls?.length || 0}
+                                </span>
+                              </Badge>
+                            </TableCell>
+                            <TableCell>
+                              <div className="flex items-center gap-2">
+                                <Button
+                                  onClick={() => startEdit(cafe)}
+                                  disabled={isSubmitting}
+                                  size="sm"
+                                  variant="ghost"
+                                  className="h-8 w-8 p-0"
                                 >
-                                  <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={2}
-                                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-                                  />
-                                </svg>
-                              </Button>
-                              <Button
-                                onClick={() =>
-                                  openGalleryManager(cafe.id, cafe.name)
-                                }
-                                size="sm"
-                                variant="ghost"
-                                className="h-8 w-8 p-0"
-                              >
-                                <svg
-                                  className="w-4 h-4"
-                                  fill="none"
-                                  stroke="currentColor"
-                                  viewBox="0 0 24 24"
+                                  <svg
+                                    className="w-4 h-4"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                  >
+                                    <path
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      strokeWidth={2}
+                                      d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                                    />
+                                  </svg>
+                                </Button>
+                                <Button
+                                  onClick={() =>
+                                    openGalleryManager(cafe.id, cafe.name)
+                                  }
+                                  size="sm"
+                                  variant="ghost"
+                                  className="h-8 w-8 p-0"
                                 >
-                                  <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={2}
-                                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-                                  />
-                                </svg>
-                              </Button>
-                              <Button
-                                onClick={() => deleteCafe(cafe.id)}
-                                disabled={isSubmitting}
-                                size="sm"
-                                variant="ghost"
-                                className="h-8 w-8 p-0 text-destructive hover:text-destructive hover:bg-destructive/10"
-                              >
-                                <svg
-                                  className="w-4 h-4"
-                                  fill="none"
-                                  stroke="currentColor"
-                                  viewBox="0 0 24 24"
+                                  <svg
+                                    className="w-4 h-4"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                  >
+                                    <path
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      strokeWidth={2}
+                                      d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                                    />
+                                  </svg>
+                                </Button>
+                                <Button
+                                  onClick={() => deleteCafe(cafe.id)}
+                                  disabled={isSubmitting}
+                                  size="sm"
+                                  variant="ghost"
+                                  className="h-8 w-8 p-0 text-destructive hover:text-destructive hover:bg-destructive/10"
                                 >
-                                  <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={2}
-                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                                  />
-                                </svg>
-                              </Button>
-                            </div>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </div>
+                                  <svg
+                                    className="w-4 h-4"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                  >
+                                    <path
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      strokeWidth={2}
+                                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                                    />
+                                  </svg>
+                                </Button>
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
 
-                {/* <div className="flex items-center justify-between px-6 py-4 border-t bg-muted/20">
+                  {/* <div className="flex items-center justify-between px-6 py-4 border-t bg-muted/20">
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
                     <span>0 of {cafes.length} row(s) selected.</span>
                   </div>
@@ -1149,159 +1162,18 @@ export default function AdminPage() {
                     </div>
                   </div>
                 </div> */}
-              </>
-            )}
-          </CardContent>
-        </Card>
+                </>
+              )}
+            </CardContent>
+          </Card>
 
-        <Dialog open={showGalleryModal} onOpenChange={setShowGalleryModal}>
-          <DialogContent className="max-w-6xl max-h-[90vh] overflow-hidden">
-            <DialogHeader>
-              <DialogTitle className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
-                  <svg
-                    className="w-5 h-5 text-primary-foreground"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-                    />
-                  </svg>
-                </div>
-                Manage Gallery
-              </DialogTitle>
-            </DialogHeader>
-
-            <div className="max-h-[calc(90vh-120px)] overflow-y-auto">
-              <Card className="mb-6">
-                <CardHeader>
-                  <CardTitle className="text-lg">
-                    Upload Gallery Images
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <Input
-                      type="file"
-                      accept="image/*"
-                      multiple
-                      onChange={handleFileSelect}
-                      disabled={galleryUploading}
-                      className="file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-primary-foreground hover:file:bg-primary/90"
-                    />
-                    {selectedFiles.length > 0 && (
-                      <Card>
-                        <CardContent className="pt-4">
-                          <p className="text-sm font-semibold mb-2">
-                            Selected {selectedFiles.length} file(s)
-                          </p>
-                          <ul className="text-xs text-muted-foreground space-y-1">
-                            {selectedFiles.map((file, index) => (
-                              <li
-                                key={index}
-                                className="flex items-center gap-2"
-                              >
-                                <div className="w-2 h-2 bg-primary rounded-full"></div>
-                                {file.name}
-                              </li>
-                            ))}
-                          </ul>
-                        </CardContent>
-                      </Card>
-                    )}
-                    <Button
-                      onClick={uploadGalleryImages}
-                      disabled={selectedFiles.length === 0 || galleryUploading}
-                      size="lg"
-                    >
-                      {galleryUploading ? (
-                        <>
-                          <svg
-                            className="animate-spin -ml-1 mr-3 h-4 w-4"
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                          >
-                            <circle
-                              className="opacity-25"
-                              cx="12"
-                              cy="12"
-                              r="10"
-                              stroke="currentColor"
-                              strokeWidth="4"
-                            ></circle>
-                            <path
-                              className="opacity-75"
-                              fill="currentColor"
-                              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                            ></path>
-                          </svg>
-                          Uploading...
-                        </>
-                      ) : (
-                        `Upload ${selectedFiles.length} File(s)`
-                      )}
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Separator className="my-6" />
-
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                {galleryFiles.map((file) => (
-                  <div key={file.id} className="relative group">
-                    <div className="relative overflow-hidden rounded-lg border">
-                      <Image
-                        src={file.url || "/placeholder.svg"}
-                        alt="Gallery image"
-                        width={200}
-                        height={200}
-                        className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-200"
-                      />
-                      <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center">
-                        <Button
-                          onClick={() => {
-                            const cafe = cafes.find(
-                              (c) => c.id === selectedCafeForGallery
-                            );
-                            if (cafe) {
-                              deleteGalleryImage(file.name, cafe.name);
-                            }
-                          }}
-                          size="sm"
-                          variant="destructive"
-                        >
-                          <svg
-                            className="w-4 h-4"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                            />
-                          </svg>
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              {galleryFiles.length === 0 && (
-                <div className="text-center py-16">
-                  <div className="w-24 h-24 bg-muted rounded-full flex items-center justify-center mx-auto mb-6">
+          <Dialog open={showGalleryModal} onOpenChange={setShowGalleryModal}>
+            <DialogContent className="max-w-6xl max-h-[90vh] overflow-hidden">
+              <DialogHeader>
+                <DialogTitle className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
                     <svg
-                      className="w-12 h-12 text-muted-foreground"
+                      className="w-5 h-5 text-primary-foreground"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -1314,18 +1186,162 @@ export default function AdminPage() {
                       />
                     </svg>
                   </div>
-                  <CardTitle className="text-xl mb-2">
-                    No gallery images yet
-                  </CardTitle>
-                  <CardDescription>
-                    Upload some images to get started!
-                  </CardDescription>
+                  Manage Gallery
+                </DialogTitle>
+              </DialogHeader>
+
+              <div className="max-h-[calc(90vh-120px)] overflow-y-auto">
+                <Card className="mb-6">
+                  <CardHeader>
+                    <CardTitle className="text-lg">
+                      Upload Gallery Images
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      <Input
+                        type="file"
+                        accept="image/*"
+                        multiple
+                        onChange={handleFileSelect}
+                        disabled={galleryUploading}
+                        className="file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-primary-foreground hover:file:bg-primary/90"
+                      />
+                      {selectedFiles.length > 0 && (
+                        <Card>
+                          <CardContent className="pt-4">
+                            <p className="text-sm font-semibold mb-2">
+                              Selected {selectedFiles.length} file(s)
+                            </p>
+                            <ul className="text-xs text-muted-foreground space-y-1">
+                              {selectedFiles.map((file, index) => (
+                                <li
+                                  key={index}
+                                  className="flex items-center gap-2"
+                                >
+                                  <div className="w-2 h-2 bg-primary rounded-full"></div>
+                                  {file.name}
+                                </li>
+                              ))}
+                            </ul>
+                          </CardContent>
+                        </Card>
+                      )}
+                      <Button
+                        onClick={uploadGalleryImages}
+                        disabled={
+                          selectedFiles.length === 0 || galleryUploading
+                        }
+                        size="lg"
+                      >
+                        {galleryUploading ? (
+                          <>
+                            <svg
+                              className="animate-spin -ml-1 mr-3 h-4 w-4"
+                              xmlns="http://www.w3.org/2000/svg"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                            >
+                              <circle
+                                className="opacity-25"
+                                cx="12"
+                                cy="12"
+                                r="10"
+                                stroke="currentColor"
+                                strokeWidth="4"
+                              ></circle>
+                              <path
+                                className="opacity-75"
+                                fill="currentColor"
+                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                              ></path>
+                            </svg>
+                            Uploading...
+                          </>
+                        ) : (
+                          `Upload ${selectedFiles.length} File(s)`
+                        )}
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Separator className="my-6" />
+
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                  {galleryFiles.map((file) => (
+                    <div key={file.id} className="relative group">
+                      <div className="relative overflow-hidden rounded-lg border">
+                        <Image
+                          src={file.url || "/placeholder.svg"}
+                          alt="Gallery image"
+                          width={200}
+                          height={200}
+                          className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-200"
+                        />
+                        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center">
+                          <Button
+                            onClick={() => {
+                              const cafe = cafes.find(
+                                (c) => c.id === selectedCafeForGallery
+                              );
+                              if (cafe) {
+                                deleteGalleryImage(file.name, cafe.name);
+                              }
+                            }}
+                            size="sm"
+                            variant="destructive"
+                          >
+                            <svg
+                              className="w-4 h-4"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                              />
+                            </svg>
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
                 </div>
-              )}
-            </div>
-          </DialogContent>
-        </Dialog>
+
+                {galleryFiles.length === 0 && (
+                  <div className="text-center py-16">
+                    <div className="w-24 h-24 bg-muted rounded-full flex items-center justify-center mx-auto mb-6">
+                      <svg
+                        className="w-12 h-12 text-muted-foreground"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                        />
+                      </svg>
+                    </div>
+                    <CardTitle className="text-xl mb-2">
+                      No gallery images yet
+                    </CardTitle>
+                    <CardDescription>
+                      Upload some images to get started!
+                    </CardDescription>
+                  </div>
+                )}
+              </div>
+            </DialogContent>
+          </Dialog>
+        </div>
       </div>
-    </div>
+    </ProtectedRoute>
   );
 }
