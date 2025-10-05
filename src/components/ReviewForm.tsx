@@ -3,7 +3,7 @@
 
 import { useState } from "react";
 import { createSupabaseBrowser } from "@/lib/supabase/client";
-import { Star } from "lucide-react";
+import { Star, X } from "lucide-react";
 import { Button } from "./ui/button";
 import { Textarea } from "./ui/textarea";
 import { toast } from "sonner";
@@ -30,6 +30,10 @@ export const ReviewForm = ({ cafeId, onReviewSubmitted }: ReviewFormProps) => {
   const [comment, setComment] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const supabase = createSupabaseBrowser();
+
+  const clearRating = () => {
+    setRating(0);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -106,24 +110,37 @@ export const ReviewForm = ({ cafeId, onReviewSubmitted }: ReviewFormProps) => {
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
       <h3 className="text-xl font-semibold">Leave a Review</h3>
-      <div className="flex items-center gap-1">
-        {[1, 2, 3, 4, 5].map((starValue) => (
-          <button
-            key={starValue}
+      <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1">
+          {[1, 2, 3, 4, 5].map((starValue) => (
+            <button
+              key={starValue}
+              type="button"
+              onClick={() => setRating(starValue)}
+              aria-label={`Rate ${starValue} star${starValue !== 1 ? "s" : ""}`}
+            >
+              <Star
+                size={30}
+                className={`cursor-pointer transition-colors duration-200 ${
+                  starValue <= rating
+                    ? "text-yellow-400 fill-yellow-400"
+                    : "text-gray-300"
+                }`}
+              />
+            </button>
+          ))}
+        </div>
+        {rating > 0 && (
+          <Button
             type="button"
-            onClick={() => setRating(starValue)}
-            aria-label={`Rate ${starValue} star${starValue !== 1 ? "s" : ""}`}
+            variant="ghost"
+            onClick={clearRating}
+            aria-label="Clear rating"
+            className=" rounded-full hover:bg-gray-100 transition-colors duration-200"
           >
-            <Star
-              size={30}
-              className={`cursor-pointer transition-colors duration-200 ${
-                starValue <= rating
-                  ? "text-yellow-400 fill-yellow-400"
-                  : "text-gray-300"
-              }`}
-            />
-          </button>
-        ))}
+            <X size={16} className="text-gray-500 hover:text-gray-700" />
+          </Button>
+        )}
       </div>
       <Textarea
         placeholder="Share your thoughts about this cafe..."
