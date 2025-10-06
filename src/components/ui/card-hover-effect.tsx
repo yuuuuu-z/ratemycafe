@@ -3,7 +3,7 @@ import { AnimatePresence, motion } from "motion/react";
 import Image from "next/image";
 import { useState } from "react";
 import { Button } from "./button";
-import { BadgeCheckIcon, Star } from "lucide-react";
+import { Star } from "lucide-react";
 import { Badge } from "./badge";
 import Link from "next/link";
 import ColourfulText from "@/components/ui/colourful-text";
@@ -13,13 +13,16 @@ export const HoverEffect = ({
   className,
 }: {
   items: {
-    id: string; // added id to track best shop
+    id: string;
     title: string;
     description: string;
     link: string;
     image: string;
     review: number; // ⭐ average rating
     rating: number; // 👥 number of reviews
+    lat: number;
+    lng: number;
+    distance: number | null;
   }[];
   className?: string;
 }) => {
@@ -33,7 +36,7 @@ export const HoverEffect = ({
   return (
     <div
       className={cn(
-        "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 py-10 gap-4",
+        "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 py-10",
         className
       )}
     >
@@ -42,90 +45,72 @@ export const HoverEffect = ({
 
         return (
           <Link
-            href={item?.link}
-            key={idx}
-            className="relative group block p-2 h-full w-full"
+            href={item.link}
+            key={item.id}
+            className="relative group block h-full w-full"
             onMouseEnter={() => setHoveredIndex(idx)}
             onMouseLeave={() => setHoveredIndex(null)}
           >
+            {/* hover background */}
             <AnimatePresence>
               {hoveredIndex === idx && (
                 <motion.span
-                  className="absolute inset-0 h-full w-full block rounded-3xl"
+                  className="absolute inset-0 rounded-2xl "
                   layoutId="hoverBackground"
                   initial={{ opacity: 0 }}
-                  animate={{
-                    opacity: 1,
-                    transition: { duration: 0.15 },
-                  }}
-                  exit={{
-                    opacity: 0,
-                    transition: { duration: 0.15, delay: 0.2 },
-                  }}
+                  animate={{ opacity: 1, transition: { duration: 0.2 } }}
+                  exit={{ opacity: 0, transition: { duration: 0.2 } }}
                 />
               )}
             </AnimatePresence>
 
-            <Card className="border-2 border-green-500 hover:ring-2 hover:ring-green-500 hover:scale-95 transition-all relative">
-              {/* card content */}
-
+            <Card className="border  border-green-500/60 hover:shadow-lg transition-all relative">
               {isBestShop && (
-                <Badge className="absolute top-1 -right-20 -translate-x-1/2 -translate-y-1/2 bg-gradient-to-r from-green-500 to-green-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md rotate-6 border border-green-500 ">
-                  {" "}
-                  🎖️ <ColourfulText text="Best Coffee Shop" />
+                <Badge className="absolute top-3 right-3 bg-green-500 text-white px-2 py-1 rounded-full rotate-12 shadow-lg">
+                  🎖️ <ColourfulText text="Best Shop" />
                 </Badge>
               )}
-              <div className="flex items-center mb-4">
+
+              <div className="flex gap-3 items-center mb-4">
                 <Image
                   src={item.image}
                   alt={item.title}
                   width={70}
                   height={70}
-                  className="rounded-lg"
+                  className="rounded-lg object-cover"
                 />
-              </div>
-
-              <div className="flex-col h-[100px]">
-                <CardTitle>
-                  <span className="md:text-[1.4rem] text-[1.2rem] font-bold pr-3">
-                    {item.title}
-                  </span>
-                  <Badge
-                    variant="secondary"
-                    className="bg-blue-500 text-white dark:bg-blue-600"
-                  >
-                    <BadgeCheckIcon />
-                    Verified
-                  </Badge>
-                </CardTitle>
-
-                <CardDescription>
-                  {item.description.length > 100 ? (
-                    <>
-                      {item.description.slice(0, 80)}...{" "}
-                      <span className="text-blue-500 cursor-pointer">
-                        see more
-                      </span>
-                    </>
-                  ) : (
-                    item.description
+                <div>
+                  <CardTitle>{item.title}</CardTitle>
+                  {item.distance !== null && (
+                    <Badge
+                      variant="outline"
+                      className="text-pink-600 font-medium border border-pink-600 mt-1"
+                    >
+                      {item.distance < 1
+                        ? `${Math.round(item.distance * 1000)} m away`
+                        : `${item.distance.toFixed(1)} km away`}
+                    </Badge>
                   )}
-                </CardDescription>
+                </div>
               </div>
 
-              <div className="flex items-center justify-between py-5">
-                <CardDescription className="pb-4">
-                  {item.rating} reviews
-                </CardDescription>
+              <CardDescription>
+                {item.description.length > 100
+                  ? `${item.description.slice(0, 80)}...`
+                  : item.description}
+              </CardDescription>
+
+              <div className="flex items-center justify-between mt-6">
+                <span className="text-sm ">{item.rating} reviews</span>
                 <Button
                   variant="outline"
                   className={cn(
-                    "flex items-center h-14 w-14 gap-1 px-4 py-2 rounded-full",
+                    "flex items-center gap-1 px-3 py-2 rounded-full text-sm",
                     item.rating > 0 ? "bg-yellow-500 text-white" : ""
                   )}
                 >
-                  {item.review > 0 ? item.review.toFixed(1) : "0.0"}{" "}
-                  <Star size={18} />
+                  {item.review > 0 ? item.review.toFixed(1) : "0.0"}
+                  <Star size={16} />
                 </Button>
               </div>
             </Card>
@@ -142,20 +127,16 @@ export const Card = ({
 }: {
   className?: string;
   children: React.ReactNode;
-}) => {
-  return (
-    <div
-      className={cn(
-        "rounded-2xl h-full w-full p-4 overflow-hidden border border-transparent relative z-20 dark:text-white",
-        className
-      )}
-    >
-      <div className="relative z-50">
-        <div className="p-4 dark:text-white">{children}</div>
-      </div>
-    </div>
-  );
-};
+}) => (
+  <div
+    className={cn(
+      "rounded-2xl h-full w-full p-5 overflow-hidden relative z-20 ",
+      className
+    )}
+  >
+    {children}
+  </div>
+);
 
 export const CardTitle = ({
   className,
@@ -163,15 +144,11 @@ export const CardTitle = ({
 }: {
   className?: string;
   children: React.ReactNode;
-}) => {
-  return (
-    <h4
-      className={cn("dark:text-white font-bold tracking-wide mt-4", className)}
-    >
-      {children}
-    </h4>
-  );
-};
+}) => (
+  <h4 className={cn("font-bold tracking-wide text-lg", className)}>
+    {children}
+  </h4>
+);
 
 export const CardDescription = ({
   className,
@@ -179,10 +156,4 @@ export const CardDescription = ({
 }: {
   className?: string;
   children: React.ReactNode;
-}) => {
-  return (
-    <p className={cn("mt-4 tracking-wide leading-relaxed text-sm", className)}>
-      {children}
-    </p>
-  );
-};
+}) => <p className={cn("mt-2 text-sm ", className)}>{children}</p>;

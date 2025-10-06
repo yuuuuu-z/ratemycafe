@@ -38,6 +38,7 @@ import {
   DialogFooter,
   DialogClose,
 } from "@/components/ui/dialog";
+import { Skeleton } from "@/components/ui/skeleton";
 
 type PageProps = {
   params: Promise<{ id: string }>;
@@ -51,6 +52,8 @@ type Cafe = {
   image_url: string;
   created_at?: string;
   updated_at?: string;
+  lat: number;
+  lng: number;
 };
 
 type Review = {
@@ -68,19 +71,18 @@ type Review = {
 export default function CafeDetailPage({ params }: PageProps) {
   const supabase = createSupabaseBrowser();
   const { id } = React.use(params);
-
   const [cafe, setCafe] = useState<Cafe | null>(null);
   const [currentUser, setCurrentUser] = useState<SupabaseUser | null>(null);
   const [reviews, setReviews] = useState<Review[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  // Track editable comments
   const [editComments, setEditComments] = useState<Record<string, string>>({});
-  // Track which edit dialogs are open
   const [openDialogs, setOpenDialogs] = useState<Record<string, boolean>>({});
 
-  // Fetch data
   useEffect(() => {
     async function fetchData() {
+      setLoading(true);
+
       const { data: cafeData, error: cafeError } = await supabase
         .from("cafes")
         .select("*")
@@ -113,26 +115,24 @@ export default function CafeDetailPage({ params }: PageProps) {
       } = await supabase.auth.getUser();
       setCurrentUser(user);
 
-      // Initialize editComments state
       const initialComments: Record<string, string> = {};
       mergedReviews.forEach((r) => {
         initialComments[r.id] = r.comment;
       });
       setEditComments(initialComments);
+
+      setLoading(false);
     }
 
     fetchData();
   }, [id, supabase]);
 
-  // Delete review
   async function handleDelete(reviewId: string) {
     const { error } = await supabase
       .from("reviews")
       .delete()
       .eq("id", reviewId);
-    if (error) {
-      console.error("Delete failed:", error);
-    } else {
+    if (!error) {
       setReviews(reviews.filter((r) => r.id !== reviewId));
       setEditComments((prev) => {
         const copy = { ...prev };
@@ -142,7 +142,6 @@ export default function CafeDetailPage({ params }: PageProps) {
     }
   }
 
-  // Edit review
   async function handleEdit(review: Review) {
     const comment = editComments[review.id];
     if (!comment?.trim()) return;
@@ -152,20 +151,45 @@ export default function CafeDetailPage({ params }: PageProps) {
       .update({ comment: comment.trim() })
       .eq("id", review.id);
 
-    if (error) {
-      console.error("Update failed:", error);
-    } else {
+    if (!error) {
       setReviews(
         reviews.map((r) =>
           r.id === review.id ? { ...r, comment: comment.trim() } : r
         )
       );
-      // Close the dialog
       setOpenDialogs((prev) => ({
         ...prev,
         [review.id]: false,
       }));
     }
+  }
+
+  if (loading) {
+    return (
+      <ProtectedRoute>
+        <div className="max-w-5xl w-full mx-auto px-4 pt-20 pb-12">
+          {/* Cafe Info Skeleton */}
+          <div className="flex flex-col md:flex-row gap-8 mb-12">
+            <Skeleton className="w-32 h-32 md:w-40 md:h-40 rounded-full" />
+            <div className="flex flex-col gap-4 flex-1">
+              <Skeleton className="h-8 w-1/3 rounded" />
+              <Skeleton className="h-5 w-1/4 rounded" />
+              <Skeleton className="h-16 w-full rounded" />
+            </div>
+          </div>
+
+          {/* Reviews Skeleton */}
+          <div className="space-y-6">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="space-y-3 border-t pt-6">
+                <Skeleton className="h-6 w-1/4 rounded" />
+                <Skeleton className="h-10 w-full rounded" />
+              </div>
+            ))}
+          </div>
+        </div>
+      </ProtectedRoute>
+    );
   }
 
   if (!cafe) return null;
@@ -191,6 +215,7 @@ export default function CafeDetailPage({ params }: PageProps) {
               className="object-contain rounded-full border border-gray-200 shadow-sm bg-gray-50"
             />
           </div>
+
           <div className="flex flex-col">
             <div>
               <div className="text-4xl font-bold flex items-center gap-2">
@@ -201,9 +226,19 @@ export default function CafeDetailPage({ params }: PageProps) {
               </div>
               <div className="text-lg mt-2 flex items-center gap-2">
                 <MapPinned size={15} color="green" /> {cafe.location}
+                <Badge variant="outline">
+                  <a
+                    href={`https://www.google.com/maps?q=${cafe.lat},${cafe.lng}`}
+                    target="_blank"
+                    // rel="noopener noreferrer"
+                  >
+                    View on Map
+                  </a>
+                </Badge>
               </div>
               <p className="mt-4 text-lg max-w-3xl">{cafe.description}</p>
             </div>
+
             <div>
               <ImageSlider cafeId={id} />
             </div>
@@ -232,7 +267,6 @@ export default function CafeDetailPage({ params }: PageProps) {
           </div>
 
           <div className="flex flex-col gap-8 md:flex-row md:items-start md:justify-between border-t border-gray-200 dark:border-gray-700 pt-8">
-            {/* Stats */}
             <div className="flex gap-16">
               <div>
                 <p className="text-base">Total Reviews</p>
@@ -243,7 +277,6 @@ export default function CafeDetailPage({ params }: PageProps) {
                 <p className="text-2xl font-semibold">{averageRating}</p>
               </div>
             </div>
-            {/* Rating Legend */}
             <div className="flex flex-col gap-3 text-base mt-2 md:mt-0">
               {[5, 4, 3, 2, 1].map((rating) => (
                 <div key={rating} className="flex items-center gap-2">
@@ -285,7 +318,6 @@ export default function CafeDetailPage({ params }: PageProps) {
                 className="border-t border-gray-200 dark:border-gray-700 pt-6"
               >
                 <div className="flex flex-col gap-4">
-                  {/* Review Header */}
                   <div className="flex gap-2 items-center">
                     <Badge
                       variant="outline"
@@ -305,12 +337,10 @@ export default function CafeDetailPage({ params }: PageProps) {
                     </Badge>
                   </div>
 
-                  {/* Comment */}
-                  <div className=" py-2">
+                  <div className="py-2">
                     <p>{review.comment}</p>
                   </div>
 
-                  {/* User actions - Only show if current user owns this review */}
                   {currentUser?.id === review.user_id && (
                     <div className="flex gap-3 mt-2">
                       {/* Edit Dialog */}
@@ -334,46 +364,36 @@ export default function CafeDetailPage({ params }: PageProps) {
                           </Button>
                         </DialogTrigger>
 
-                        <DialogContent className="motion-safe:animate-none max-w-lg p-5">
+                        <DialogContent className="max-w-lg p-5">
                           <DialogHeader className="space-y-2">
-                            <DialogTitle className="text-xl font-semibold">
-                              Edit your review
-                            </DialogTitle>
+                            <DialogTitle>Edit your review</DialogTitle>
                             <p className="text-sm text-muted-foreground">
                               Update your thoughts about this cafe
                             </p>
                           </DialogHeader>
 
                           <div className="space-y-4 py-4">
-                            <div className="space-y-2">
-                              <label className="text-sm font-medium text-foreground">
-                                Your comment
-                              </label>
-                              <textarea
-                                value={editComments[review.id] || ""}
-                                onChange={(e) =>
-                                  setEditComments((prev) => ({
-                                    ...prev,
-                                    [review.id]: e.target.value,
-                                  }))
-                                }
-                                className="w-full p-3 border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent resize-none bg-background text-foreground placeholder:text-muted-foreground transition-colors"
-                                rows={5}
-                                placeholder="Share your updated thoughts about this cafe..."
-                              />
-                            </div>
+                            <textarea
+                              value={editComments[review.id] || ""}
+                              onChange={(e) =>
+                                setEditComments((prev) => ({
+                                  ...prev,
+                                  [review.id]: e.target.value,
+                                }))
+                              }
+                              className="w-full p-3 border rounded-lg"
+                              rows={5}
+                              placeholder="Share your updated thoughts..."
+                            />
                           </div>
 
-                          <DialogFooter className="flex gap-3 pt-4">
+                          <DialogFooter>
                             <DialogClose asChild>
-                              <Button variant="outline" className="flex-1">
-                                Cancel
-                              </Button>
+                              <Button variant="outline">Cancel</Button>
                             </DialogClose>
                             <Button
                               onClick={() => handleEdit(review)}
                               disabled={!editComments[review.id]?.trim()}
-                              className="flex-1 bg-primary hover:bg-primary/90"
                             >
                               Save Changes
                             </Button>
@@ -381,7 +401,7 @@ export default function CafeDetailPage({ params }: PageProps) {
                         </DialogContent>
                       </Dialog>
 
-                      {/* Delete Alert Dialog */}
+                      {/* Delete Alert */}
                       <AlertDialog>
                         <AlertDialogTrigger asChild>
                           <Button
@@ -394,25 +414,18 @@ export default function CafeDetailPage({ params }: PageProps) {
                           </Button>
                         </AlertDialogTrigger>
 
-                        <AlertDialogContent className="motion-safe:animate-none max-w-md">
-                          <AlertDialogHeader className="space-y-2">
-                            <AlertDialogTitle className="text-xl font-semibold">
-                              Delete Review
-                            </AlertDialogTitle>
-                            <AlertDialogDescription className="text-muted-foreground">
+                        <AlertDialogContent className="max-w-md">
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Delete Review</AlertDialogTitle>
+                            <AlertDialogDescription>
                               Are you sure you want to delete this review? This
-                              action cannot be undone and will permanently
-                              remove your review from this cafe.
+                              action cannot be undone.
                             </AlertDialogDescription>
                           </AlertDialogHeader>
-
-                          <AlertDialogFooter className="flex gap-3 pt-4">
-                            <AlertDialogCancel className="flex-1">
-                              Cancel
-                            </AlertDialogCancel>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
                             <AlertDialogAction
                               onClick={() => handleDelete(review.id)}
-                              className="flex-1 bg-destructive hover:bg-destructive/90"
                             >
                               Delete Review
                             </AlertDialogAction>

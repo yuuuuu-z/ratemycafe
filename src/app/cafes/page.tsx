@@ -19,6 +19,8 @@ interface Cafe {
   image_url: string;
   location?: string;
   reviews?: Review[];
+  lat: number;
+  lng: number;
 }
 
 interface Review {
@@ -30,6 +32,10 @@ export default function CafesPage() {
   const [cafes, setCafes] = useState<Cafe[]>([]);
   const [search, setSearch] = useState("");
   const [sortBy, setSortBy] = useState<"name" | "reviews" | "stars">("name");
+  const [userLocation, setUserLocation] = useState<{
+    lat: number;
+    lng: number;
+  } | null>(null);
 
   const TOP_N = 5; // how many top items to show
 
@@ -49,6 +55,21 @@ export default function CafesPage() {
     fetchCafes();
   }, []);
 
+  useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          setUserLocation({
+            lat: pos.coords.latitude,
+            lng: pos.coords.longitude,
+          });
+        },
+        (err) => {
+          console.error("Geolocation error:", err);
+        }
+      );
+    }
+  }, []);
   useEffect(() => {
     const fetchReviews = async () => {
       if (cafes.length === 0) return;
@@ -86,6 +107,9 @@ export default function CafesPage() {
   }, [cafes.length]);
 
   // 1) compute review stats
+  const userLat = userLocation?.lat ?? null;
+  const userLng = userLocation?.lng ?? null;
+
   const computed = cafes.map((cafe) => {
     const totalReviews = cafe.reviews?.length || 0;
     const averageRating =
@@ -93,17 +117,24 @@ export default function CafesPage() {
         ? cafe.reviews!.reduce((s, r) => s + (r.rating || 0), 0) / totalReviews
         : 0;
 
+    let distance: number | null = null;
+    if (userLat !== null && userLng !== null && cafe.lat && cafe.lng) {
+      distance = haversineDistance(userLat, userLng, cafe.lat, cafe.lng);
+    }
+
     return {
       id: cafe.id,
       title: cafe.name,
       description: cafe.description,
       link: `/cafes/${cafe.id}`,
       image: cafe.image_url,
-      review: averageRating, // average rating
-      rating: totalReviews, // number of reviews
+      review: averageRating,
+      rating: totalReviews,
+      lat: cafe.lat,
+      lng: cafe.lng,
+      distance, // ✅ will be null if lat/lng missing
     };
   });
-
   // 2) apply search filter
   const searched = computed.filter((cafe) =>
     cafe.title.toLowerCase().includes(search.toLowerCase())
@@ -189,9 +220,33 @@ export default function CafesPage() {
             image: cafe.image,
             review: cafe.review,
             rating: cafe.rating,
+            lat: cafe.lat, // ✅ fixed
+            lng: cafe.lng,
+            distance: cafe.distance,
           }))}
         />
       )}
     </div>
   );
+}
+
+function haversineDistance(
+  lat1: number,
+  lon1: number,
+  lat2: number,
+  lon2: number
+) {
+  const toRad = (x: number) => (x * Math.PI) / 180;
+
+  const R = 6371; // km
+  const dLat = toRad(lat2 - lat1);
+  const dLon = toRad(lon2 - lon1);
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(toRad(lat1)) *
+      Math.cos(toRad(lat2)) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c; // distance in km
 }
