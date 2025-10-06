@@ -32,9 +32,9 @@ export default function UserLocation() {
   }, []);
 
   return (
-    <div>
+    <div className="text-sm">
       {place ? (
-        <p className="text-sm">{place}</p>
+        <p>{place}</p>
       ) : location ? (
         <p>
           Getting place name for {location.lat}, {location.lng}...
