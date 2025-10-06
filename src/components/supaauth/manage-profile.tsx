@@ -9,6 +9,7 @@ import { FaGithub, FaDiscord } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
 
 import Image from "next/image";
+import UserLocation from "../ UserLocation";
 
 export type IconKey = "email" | "github" | "discord" | "google";
 
@@ -90,6 +91,12 @@ export default function ManageProfile() {
             <h1 className="text-sm font-medium w-36">Name</h1>
             <div className="flex-1 flex justify-between items-center sm:pl-3  ">
               <p className="text-sm">{data?.user_metadata.full_name}</p>
+            </div>
+          </div>
+          <div className="flex items-center sm:gap-24 py-5 justify-between ">
+            <h1 className="text-sm font-medium w-36">Location</h1>
+            <div className="flex-1 flex justify-between items-center sm:pl-3  ">
+              <UserLocation />
             </div>
           </div>
           <div className="flex items-start py-5 gap-2 sm:gap-24 ">
