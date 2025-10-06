@@ -64,13 +64,14 @@ export const HoverEffect = ({
               )}
             </AnimatePresence>
 
-            <Card className="border  border-green-500/60 hover:shadow-lg transition-all relative">
+            <Card className="border border-green-500/60 hover:shadow-lg transition-all relative flex flex-col">
               {isBestShop && (
                 <Badge className="absolute top-3 right-3 bg-green-500 text-white px-2 py-1 rounded-full rotate-12 shadow-lg">
                   🎖️ <ColourfulText text="Best Shop" />
                 </Badge>
               )}
 
+              {/* top section */}
               <div className="flex gap-3 items-center mb-4">
                 <Image
                   src={item.image}
@@ -81,7 +82,7 @@ export const HoverEffect = ({
                 />
                 <div>
                   <CardTitle>{item.title}</CardTitle>
-                  {item.distance !== null && (
+                  {item.distance !== null ? (
                     <Badge
                       variant="outline"
                       className="text-pink-600 font-medium border border-pink-600 mt-1"
@@ -90,18 +91,24 @@ export const HoverEffect = ({
                         ? `${Math.round(item.distance * 1000)} m away`
                         : `${item.distance.toFixed(1)} km away`}
                     </Badge>
+                  ) : (
+                    <span className="text-xs text-gray-400">No location</span>
                   )}
                 </div>
               </div>
 
-              <CardDescription>
-                {item.description.length > 100
-                  ? `${item.description.slice(0, 80)}...`
-                  : item.description}
-              </CardDescription>
+              {/* middle section - grows/shrinks */}
+              <div className="flex-1">
+                <CardDescription>
+                  {item.description.length > 100
+                    ? `${item.description.slice(0, 80)}...`
+                    : item.description}
+                </CardDescription>
+              </div>
 
-              <div className="flex items-center justify-between mt-6">
-                <span className="text-sm ">{item.rating} reviews</span>
+              {/* footer pinned at bottom */}
+              <div className="flex items-center justify-between pt-4">
+                <span className="text-sm">{item.rating} reviews</span>
                 <Button
                   variant="outline"
                   className={cn(
