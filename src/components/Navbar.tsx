@@ -53,9 +53,9 @@ export default function Navbar() {
       {pathname !== "/sign-in" &&
         (isLoggedIn ? (
           <div className="flex items-center justify-center gap-2">
-            {/* <Link href="/admin">
+            <Link href="/admin">
               <Button variant="ghost">Admin</Button>
-            </Link> */}
+            </Link>
             {/* <Button className="bg-red-500 text-white" onClick={handleSignOut}>
               Sign Out
             </Button> */}
