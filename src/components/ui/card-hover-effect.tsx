@@ -6,6 +6,7 @@ import { Button } from "./button";
 import { BadgeCheckIcon, Star } from "lucide-react";
 import { Badge } from "./badge";
 import Link from "next/link";
+import ColourfulText from "@/components/ui/colourful-text";
 
 export const HoverEffect = ({
   items,
@@ -71,7 +72,7 @@ export const HoverEffect = ({
               {isBestShop && (
                 <Badge className="absolute top-1 -right-20 -translate-x-1/2 -translate-y-1/2 bg-gradient-to-r from-green-500 to-green-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md rotate-6 border border-green-500 ">
                   {" "}
-                  🌟 Best Coffee Shop{" "}
+                  🎖️ <ColourfulText text="Best Coffee Shop" />
                 </Badge>
               )}
               <div className="flex items-center mb-4">
@@ -117,10 +118,10 @@ export const HoverEffect = ({
                   {item.rating} reviews
                 </CardDescription>
                 <Button
-                  variant="secondary"
+                  variant="outline"
                   className={cn(
                     "flex items-center h-14 w-14 gap-1 px-4 py-2 rounded-full",
-                    item.rating > 0 ? "bg-green-500 text-white" : ""
+                    item.rating > 0 ? "bg-yellow-500 text-white" : ""
                   )}
                 >
                   {item.review > 0 ? item.review.toFixed(1) : "0.0"}{" "}

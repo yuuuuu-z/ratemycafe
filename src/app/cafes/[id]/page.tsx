@@ -4,6 +4,7 @@ import { createSupabaseBrowser } from "@/lib/supabase/client";
 import { notFound } from "next/navigation";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import Image from "next/image";
+
 import {
   BadgeCheckIcon,
   EditIcon,

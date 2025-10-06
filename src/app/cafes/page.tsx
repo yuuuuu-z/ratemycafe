@@ -31,8 +31,7 @@ export default function CafesPage() {
   const [search, setSearch] = useState("");
   const [sortBy, setSortBy] = useState<"name" | "reviews" | "stars">("name");
 
-  // how many top items to show when using "Most Reviewed" or "Highest Rated"
-  const TOP_N = 5;
+  const TOP_N = 5; // how many top items to show
 
   useEffect(() => {
     const fetchCafes = async () => {
@@ -54,7 +53,6 @@ export default function CafesPage() {
     const fetchReviews = async () => {
       if (cafes.length === 0) return;
 
-      console.log("Fetching reviews for", cafes.length, "cafes");
       const supabase = createSupabaseBrowser();
       const { data: reviewsData, error } = await supabase
         .from("reviews")
@@ -65,7 +63,6 @@ export default function CafesPage() {
         return;
       }
 
-      console.log("Fetched reviews:", reviewsData);
       if (reviewsData) {
         const reviewsByCafe = reviewsData.reduce(
           (acc: Record<string, Review[]>, review) => {
@@ -88,7 +85,7 @@ export default function CafesPage() {
     fetchReviews();
   }, [cafes.length]);
 
-  // 1) map to computed fields, 2) filter by search, 3) apply sort / "top N" filtering
+  // 1) compute review stats
   const computed = cafes.map((cafe) => {
     const totalReviews = cafe.reviews?.length || 0;
     const averageRating =
@@ -102,35 +99,27 @@ export default function CafesPage() {
       description: cafe.description,
       link: `/cafes/${cafe.id}`,
       image: cafe.image_url,
-      review: averageRating, // average rating for display
+      review: averageRating, // average rating
       rating: totalReviews, // number of reviews
     };
   });
 
-  console.log("Computed cafes:", computed);
-
-  // apply search filter
+  // 2) apply search filter
   const searched = computed.filter((cafe) =>
     cafe.title.toLowerCase().includes(search.toLowerCase())
   );
 
-  // apply sorting + "top N" behavior
+  // 3) apply sorting + "top N"
   let finalList = [...searched];
-
   if (sortBy === "name") {
     finalList.sort((a, b) => a.title.localeCompare(b.title));
-    // show all when sorting by name
   } else if (sortBy === "reviews") {
-    // Most Reviewed -> show only top N by rating (number of reviews)
     finalList.sort((a, b) => b.rating - a.rating);
     finalList = finalList.slice(0, TOP_N);
   } else if (sortBy === "stars") {
-    // Highest Rated -> show only top N by review (average rating)
     finalList.sort((a, b) => b.review - a.review);
     finalList = finalList.slice(0, TOP_N);
   }
-
-  console.log("Final list:", finalList);
 
   return (
     <div className="p-6">
@@ -175,32 +164,34 @@ export default function CafesPage() {
             </SelectContent>
           </Select>
         </div>
-
-        {/* quick "Show all" control when in top-N view */}
-        {/* {sortBy !== "name" && (
-          <button
-            onClick={() => setSortBy("name")}
-            className="text-sm underline ml-2"
-            title="Show all cafes"
-          >
-            Show all
-          </button>
-        )} */}
       </div>
 
-      {/* optional helper text so user knows they're seeing top-N */}
-
-      <HoverEffect
-        items={finalList.map((cafe) => ({
-          id: cafe.id,
-          title: cafe.title,
-          description: cafe.description,
-          link: cafe.link,
-          image: cafe.image,
-          review: cafe.review, // average stars shown on card
-          rating: cafe.rating, // number of reviews shown on card
-        }))}
-      />
+      {/* ✅ Conditional display */}
+      {cafes.length === 0 ? (
+        <div className="flex items-center justify-center py-20">
+          <p className="text-gray-500 text-lg font-medium">
+            🚫 No cafes available yet
+          </p>
+        </div>
+      ) : finalList.length === 0 ? (
+        <div className="flex items-center justify-center py-20">
+          <p className="text-gray-500 text-lg font-medium">
+            ☕ No Coffee Shop Found
+          </p>
+        </div>
+      ) : (
+        <HoverEffect
+          items={finalList.map((cafe) => ({
+            id: cafe.id,
+            title: cafe.title,
+            description: cafe.description,
+            link: cafe.link,
+            image: cafe.image,
+            review: cafe.review,
+            rating: cafe.rating,
+          }))}
+        />
+      )}
     </div>
   );
 }
