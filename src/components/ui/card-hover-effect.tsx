@@ -47,7 +47,7 @@ export const HoverEffect = ({
           <Link
             href={item.link}
             key={item.id}
-            className="relative group block h-full w-full"
+            className="relative group block h-full w-full "
             onMouseEnter={() => setHoveredIndex(idx)}
             onMouseLeave={() => setHoveredIndex(null)}
           >
@@ -64,7 +64,7 @@ export const HoverEffect = ({
               )}
             </AnimatePresence>
 
-            <Card className="border border-green-500/60 hover:shadow-lg transition-all relative flex flex-col">
+            <Card className="border-2 border-green-500/60  hover:shadow-lg transition-all relative flex flex-col ">
               {isBestShop && (
                 <Badge className="absolute top-3 right-3 bg-green-500 text-white px-2 py-1 rounded-full rotate-12 shadow-lg">
                   🎖️ <ColourfulText text="Best Shop" />
@@ -112,7 +112,7 @@ export const HoverEffect = ({
                 <Button
                   variant="outline"
                   className={cn(
-                    "flex items-center gap-1 px-3 py-2 rounded-full text-sm",
+                    "flex items-center gap-1 px-3 py-2 rounded-full text-sm ",
                     item.rating > 0 ? "bg-yellow-500 text-white" : ""
                   )}
                 >
@@ -137,7 +137,7 @@ export const Card = ({
 }) => (
   <div
     className={cn(
-      "rounded-2xl h-full w-full p-5 overflow-hidden relative z-20 ",
+      "rounded-2xl h-full w-full p-5 overflow-hidden relative z-20 transform transition-all duration-300 hover:scale-[1.05] hover:-translate-y-1 hover:shadow-2xl",
       className
     )}
   >
