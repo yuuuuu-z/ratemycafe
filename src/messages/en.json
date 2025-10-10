@@ -1,0 +1,19 @@
+{
+  "footer": {
+    "contact": "Contact",
+    "contact1": "Phone",
+    "contact2": "Email",
+    "copyright": "Copyright",
+    "copyright1": "Chuon Sopheaktra. All rights reserved.",
+    "darkmode": "Dark Mode",
+    "header": "This is a web platform that allows users to discover, rate, and\nreview cafes based on different experiences.",
+    "lightmode": "Light Mode",
+    "sitemap": "Site Map",
+    "sitemap1": "Terms & Conditions",
+    "sitemap2": "Privacy",
+    "sitemap3": "About"
+  },
+  "nav": {
+    "header": " RateMyCafe"
+  }
+}

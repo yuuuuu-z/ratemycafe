@@ -1,6 +1,6 @@
 "use client";
 
-import { useUser } from "@/app/hook/useUser";
+import { useUser } from "../app/[locale]/hook/useUser";
 import { useRouter, usePathname } from "next/navigation";
 import { useEffect } from "react";
 
@@ -18,7 +18,7 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
 
   useEffect(() => {
     if (!isLoading && !user && !isSignInPage) {
-      router.push("/sign-in" );
+      router.push("/sign-in");
     }
   }, [user, isLoading, router, isSignInPage]);
 

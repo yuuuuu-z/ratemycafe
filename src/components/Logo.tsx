@@ -1,8 +1,10 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { useTranslations } from "next-intl";
 
 export default function Logo() {
+  const t = useTranslations("nav");
   return (
     <div className="flex items-center space-x-2">
       <motion.svg
@@ -34,7 +36,7 @@ export default function Logo() {
     before:bg-foreground before:transition-[width] before:duration-300 
     hover:before:w-full"
       >
-        RateMyCafe
+        {t("header")}
       </span>
     </div>
   );

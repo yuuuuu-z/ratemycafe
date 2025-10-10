@@ -1,4 +1,4 @@
-import { useUser } from "@/app/hook/useUser";
+import { useUser } from "../../app/[locale]/hook/useUser";
 import { cn } from "@/lib/utils";
 import React from "react";
 import Image from "next/image";

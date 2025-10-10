@@ -1,16 +1,18 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { createServerClient } from "@supabase/ssr";
+import createIntlMiddleware from "next-intl/middleware";
+import { routing } from "./i18n/routing";
 
-// Define your admin email
+const intlMiddleware = createIntlMiddleware(routing);
+
 const ADMIN_EMAIL = "sopheak0891@gmail.com";
 
 export async function middleware(req: NextRequest) {
-  let res = NextResponse.next({
-    request: req,
-  });
+  // Run next-intl middleware first (handles / → /en etc.)
+  const res = intlMiddleware(req);
 
-  // Create Supabase server client for middleware
+  // Create Supabase client
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -23,30 +25,18 @@ export async function middleware(req: NextRequest) {
           cookiesToSet.forEach(({ name, value }) =>
             req.cookies.set(name, value)
           );
-          res = NextResponse.next({
-            request: req,
-          });
-          cookiesToSet.forEach(({ name, value, options }) =>
-            res.cookies.set(name, value, options)
-          );
         },
       },
     }
   );
 
-  // Get current user session
+  // Check session
   const { data } = await supabase.auth.getUser();
   const user = data.user;
 
   // Protect /admin
   if (req.nextUrl.pathname.startsWith("/admin")) {
-    if (!user) {
-      // Not logged in → redirect home
-      return NextResponse.redirect(new URL("/", req.url));
-    }
-
-    if (user.email !== ADMIN_EMAIL) {
-      // Logged in but not admin → redirect home
+    if (!user || user.email !== ADMIN_EMAIL) {
       return NextResponse.redirect(new URL("/", req.url));
     }
   }
@@ -55,5 +45,9 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/admin/:path*"], // Apply only to /admin routes
+  matcher: [
+    "/",
+    "/(en|kh)/:path*", // locales you support
+    "/admin/:path*",
+  ],
 };

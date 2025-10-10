@@ -6,7 +6,10 @@ import NextTopLoader from "nextjs-toploader";
 import Navbar from "@/components/Navbar";
 import { ThemeProvider } from "next-themes";
 import Footer from "@/components/Footer";
-import { QueryProvider } from "@/app/providers/query-provider";
+import { QueryProvider } from "./providers/query-provider";
+import { hasLocale, NextIntlClientProvider } from "next-intl";
+import { routing } from "@/i18n/routing";
+import { notFound } from "next/navigation";
 
 const karla = Karla({
   variable: "--font-karla",
@@ -21,24 +24,39 @@ export const metadata: Metadata = {
   description: "Rate and discover the best cafes around you",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
-}: Readonly<{
+  params,
+}: {
   children: React.ReactNode;
-}>) {
+  params: { locale: string };
+}) {
+  const { locale } = await params;
+
+  if (!hasLocale(routing.locales, locale)) {
+    notFound();
+  }
+
+  let messages;
+  try {
+    messages = (await import(`../../messages/${locale}.json`)).default;
+  } catch (err) {
+    console.log(err);
+    notFound();
+  }
+
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang={locale} suppressHydrationWarning>
       <body className={`${karla.className} antialiased`}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <QueryProvider>
             <main className="max-w-6xl mx-auto min-h-screen px-5 flex flex-col">
               <NextTopLoader showSpinner={false} color="black" />
-
-              <Navbar />
-              {children}
-
-              <Footer />
-
+              <NextIntlClientProvider locale={locale} messages={messages}>
+                <Navbar />
+                {children}
+                <Footer />
+              </NextIntlClientProvider>
               <Toaster richColors />
             </main>
           </QueryProvider>

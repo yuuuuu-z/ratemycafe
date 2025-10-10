@@ -11,6 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useLocale } from "next-intl";
 
 interface Cafe {
   id: string;
@@ -38,6 +39,7 @@ export default function CafesPage() {
   } | null>(null);
 
   const TOP_N = 5; // how many top items to show
+  const locale = useLocale();
 
   useEffect(() => {
     const fetchCafes = async () => {
@@ -126,7 +128,7 @@ export default function CafesPage() {
       id: cafe.id,
       title: cafe.name,
       description: cafe.description,
-      link: `/cafes/${cafe.id}`,
+      link: `/${locale}/cafes/${cafe.id}`,
       image: cafe.image_url,
       review: averageRating,
       rating: totalReviews,
@@ -216,7 +218,7 @@ export default function CafesPage() {
             id: cafe.id,
             title: cafe.title,
             description: cafe.description,
-            link: cafe.link,
+            link: `/${locale}/cafes/${cafe.id}`,
             image: cafe.image,
             review: cafe.review,
             rating: cafe.rating,

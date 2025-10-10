@@ -8,8 +8,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { FcGoogle } from "react-icons/fc";
 import { toast } from "sonner";
+import { useLocale } from "next-intl";
 
 export default function Page() {
+  const locale = useLocale();
   const supabase = createSupabaseBrowser();
   const router = useRouter();
   const [loading, setLoading] = useState(true);
@@ -36,7 +38,7 @@ export default function Page() {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: `${siteUrl}/auth/callback`,
+        redirectTo: `${siteUrl}/${locale}/callback`,
         queryParams: {
           prompt: "select_account",
         },

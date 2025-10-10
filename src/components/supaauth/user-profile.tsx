@@ -12,7 +12,7 @@ import { createSupabaseBrowser } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
-import { useUser } from "@/app/hook/useUser";
+import { useUser } from "../../app/[locale]/hook/useUser";
 import ManageProfile from "./manage-profile";
 
 import Image from "next/image";

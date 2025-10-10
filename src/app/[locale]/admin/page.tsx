@@ -33,6 +33,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
+import Link from "next/link";
 
 interface Cafe {
   id: string;
@@ -560,7 +561,7 @@ export default function AdminPage() {
               You must be logged in to access the admin panel.
             </CardDescription>
             <Button asChild size="lg">
-              <a href="/sign-in">Sign In</a>
+              <Link href="/sign-in">Sign In</Link>
             </Button>
           </CardContent>
         </Card>

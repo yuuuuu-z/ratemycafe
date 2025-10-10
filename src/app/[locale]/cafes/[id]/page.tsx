@@ -29,20 +29,19 @@ export async function generateMetadata({
     };
   }
 
-  const imageUrl = cafe.image_url ?? "/logo.png"; // fallback if missing
+  const siteUrl = "https://ratemycafe.vercel.app"; // change to your domain
 
   return {
     title: `${cafe.name} - RateMyCafe`,
     description: `Discover reviews and ratings for ${cafe.name} on RateMyCafe.`,
-    icons: {
-      icon: imageUrl, // 👈 tab/browser favicon
-    },
     openGraph: {
       title: `${cafe.name} - RateMyCafe`,
       description: `Discover reviews and ratings for ${cafe.name} on RateMyCafe.`,
       images: [
         {
-          url: imageUrl, // 👈 used in link previews
+          url: cafe.image_url?.startsWith("http")
+            ? cafe.image_url
+            : `${siteUrl}${cafe.image_url}`, // ensure absolute
           width: 1200,
           height: 630,
           alt: cafe.name,
@@ -53,7 +52,16 @@ export async function generateMetadata({
       card: "summary_large_image",
       title: `${cafe.name} - RateMyCafe`,
       description: `Discover reviews and ratings for ${cafe.name} on RateMyCafe.`,
-      images: [imageUrl],
+      images: [
+        cafe.image_url?.startsWith("http")
+          ? cafe.image_url
+          : `${siteUrl}${cafe.image_url}`,
+      ],
+    },
+    icons: {
+      icon: cafe.image_url?.startsWith("http")
+        ? cafe.image_url
+        : `${siteUrl}${cafe.image_url}`,
     },
   };
 }
