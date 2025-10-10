@@ -1,4 +1,21 @@
 {
+  "cafe": {
+    "average": "Average",
+    "avgReview": "Average Ratings",
+    "belowAverage": "Below Average",
+    "cmt": "Share your thoughts about this cafe...",
+    "environment": "Environment",
+    "excellent": "Excellent",
+    "good": "Good",
+    "leaveReview": "Leave a Review",
+    "poor": "Poor",
+    "price": " Price",
+    "productivity": "Productivity",
+    "review": "Reviews",
+    "reviewToal": "Total Reviews",
+    "SubmitReview": "Submit Review",
+    "taste": "Taste"
+  },
   "footer": {
     "contact": "Contact",
     "contact1": "Phone",
@@ -11,7 +28,7 @@
     "sitemap": "Site Map",
     "sitemap1": "Terms & Conditions",
     "sitemap2": "Privacy",
-    "sitemap3": "About"
+    "sitemap3": "About Us"
   },
   "nav": {
     "header": " RateMyCafe"

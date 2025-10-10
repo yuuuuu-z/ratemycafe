@@ -7,6 +7,7 @@ import { Star, X } from "lucide-react";
 import { Button } from "./ui/button";
 import { Textarea } from "./ui/textarea";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 
 type Review = {
   id: string;
@@ -26,6 +27,7 @@ type ReviewFormProps = {
 };
 
 export const ReviewForm = ({ cafeId, onReviewSubmitted }: ReviewFormProps) => {
+  const c = useTranslations("cafe");
   const [rating, setRating] = useState<number>(0);
   const [comment, setComment] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -109,7 +111,7 @@ export const ReviewForm = ({ cafeId, onReviewSubmitted }: ReviewFormProps) => {
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-      <h3 className="text-xl font-semibold">Leave a Review</h3>
+      <h3 className="text-xl font-semibold">{c("leaveReview")}</h3>
       <div className="flex items-center gap-2">
         <div className="flex items-center gap-1">
           {[1, 2, 3, 4, 5].map((starValue) => (
@@ -143,14 +145,14 @@ export const ReviewForm = ({ cafeId, onReviewSubmitted }: ReviewFormProps) => {
         )}
       </div>
       <Textarea
-        placeholder="Share your thoughts about this cafe..."
+        placeholder={c("cmt")}
         value={comment}
         onChange={(e) => setComment(e.target.value)}
         rows={4}
         maxLength={500}
       />
       <Button type="submit" disabled={isSubmitting}>
-        {isSubmitting ? "Submitting..." : "Submit Review"}
+        {isSubmitting ? c("submitting") : c("SubmitReview")}
       </Button>
     </form>
   );
