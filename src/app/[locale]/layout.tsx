@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Karla } from "next/font/google";
+import { Karla, Kantumruy_Pro } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 import NextTopLoader from "nextjs-toploader";
@@ -11,9 +11,18 @@ import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { routing } from "@/i18n/routing";
 import { notFound } from "next/navigation";
 
+// English font
 const karla = Karla({
   variable: "--font-karla",
   subsets: ["latin"],
+  weight: ["400", "500", "700"],
+});
+
+// Khmer font
+const kantumruy = Kantumruy_Pro({
+  variable: "--font-kantumruy",
+  subsets: ["khmer"],
+  weight: ["400", "500", "700"],
 });
 
 export const metadata: Metadata = {
@@ -47,7 +56,15 @@ export default async function RootLayout({
 
   return (
     <html lang={locale} suppressHydrationWarning>
-      <body className={`${karla.className} antialiased`}>
+      <body
+        className={`${karla.variable} ${kantumruy.variable} font-sans antialiased`}
+        style={{
+          fontFamily:
+            locale === "km"
+              ? "var(--font-kantumruy), sans-serif"
+              : "var(--font-karla), sans-serif",
+        }}
+      >
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <QueryProvider>
             <main className="max-w-6xl mx-auto min-h-screen px-5 flex flex-col">

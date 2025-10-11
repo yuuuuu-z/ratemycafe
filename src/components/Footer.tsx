@@ -23,6 +23,9 @@ export default function Footer() {
 
   const isDark = theme === "dark";
 
+  // Helper to build locale-based absolute paths
+  const l = (path: string) => `/${locale}${path}`;
+
   return (
     <>
       <div className="flex flex-col space-y-8 p-3 md:flex-row md:justify-between mt-28 border-t border-gray-200 dark:border-gray-700">
@@ -30,18 +33,20 @@ export default function Footer() {
           <p className="text-3xl font-bold ">{t("header")}</p>
           <p className="md:w-[500px]">{f("header")}</p>
         </div>
+
         <div className="flex flex-col space-y-3">
           <p className="text-[1.2rem] font-bold ">{f("sitemap")}</p>
-          <Link className="hover:underline" href={`${locale}/terms`}>
+          <Link className="hover:underline" href={l("/terms")}>
             {f("sitemap1")}
           </Link>
-          <Link className="hover:underline" href={`${locale}/privacy`}>
+          <Link className="hover:underline" href={l("/privacy")}>
             {f("sitemap2")}
           </Link>
-          <Link className="hover:underline" href={`${locale}/about`}>
+          <Link className="hover:underline" href={l("/about")}>
             {f("sitemap3")}
           </Link>
         </div>
+
         <div className="flex flex-col space-y-3">
           <p className="text-[1.2rem] font-bold">{f("contact")}</p>
           <Link className="hover:underline" href="tel:0964320421">
@@ -53,7 +58,7 @@ export default function Footer() {
         </div>
       </div>
 
-      <div className="flex flex-col  p-3 space-y-6 md:flex-row md:justify-between md:items-center ">
+      <div className="flex flex-col p-3 space-y-6 md:flex-row md:justify-between md:items-center">
         <p className="font-bold pt-7">
           {f("copyright")} © {currentYear} {f("copyright1")}
         </p>

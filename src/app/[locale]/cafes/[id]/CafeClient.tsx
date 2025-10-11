@@ -413,13 +413,13 @@ export default function CafeClient({ cafe }: CafeClientProps) {
                       </Dialog>
 
                       {/* Delete Alert */}
+                      {/* Delete Alert */}
                       <AlertDialog>
                         <AlertDialogTrigger asChild>
                           <Button
                             variant="ghost"
                             size="sm"
-                            className="bg-gradient-to-r from-red-500/20 to-pink-500/20 backdrop-blur-sm border border-red-300/30  dark:text-red-200 hover:from-red-500/30 hover:to-pink-500/30 hover:border-red-400/50 transition-all duration-200 shadow-lg hover:shadow-red-500/25 group"
-                            onClick={() => handleDelete(review.id)}
+                            className="bg-gradient-to-r from-red-500/20 to-pink-500/20 backdrop-blur-sm border border-red-300/30 dark:text-red-200 hover:from-red-500/30 hover:to-pink-500/30 hover:border-red-400/50 transition-all duration-200 shadow-lg hover:shadow-red-500/25 group"
                           >
                             <Trash2 className="w-3 h-3 mr-1.5 group-hover:scale-110 transition-transform duration-200" />
                             Delete
@@ -430,16 +430,20 @@ export default function CafeClient({ cafe }: CafeClientProps) {
                           <AlertDialogHeader>
                             <AlertDialogTitle>Delete Review</AlertDialogTitle>
                             <AlertDialogDescription>
-                              Are you sure you want to delete this review? This
-                              action cannot be undone.
+                              Are you absolutely sure you want to delete this
+                              review?
+                              <br />
+                              This action cannot be undone and will permanently
+                              remove your comment.
                             </AlertDialogDescription>
                           </AlertDialogHeader>
                           <AlertDialogFooter>
                             <AlertDialogCancel>Cancel</AlertDialogCancel>
                             <AlertDialogAction
+                              className="bg-red-600 hover:bg-red-700 text-white"
                               onClick={() => handleDelete(review.id)}
                             >
-                              Delete Review
+                              Yes, Delete
                             </AlertDialogAction>
                           </AlertDialogFooter>
                         </AlertDialogContent>
