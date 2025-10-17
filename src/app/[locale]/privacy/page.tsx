@@ -25,7 +25,7 @@ export default function page() {
           <h2 className="text-2xl font-bold  mb-3">1. Introduction</h2>
           <p className=" leading-relaxed">
             Your privacy is important to us. This Privacy Policy explains how
-            CafeRater collects, uses, and protects your personal information
+            RateMyCafe collects, uses, and protects your personal information
             when you use our Service.
           </p>
         </div>
@@ -66,7 +66,7 @@ export default function page() {
             We use the information we collect to:
           </p>
           <ul className="list-disc list-inside  leading-relaxed space-y-2">
-            <li>Provide and operate the CafeRater Service.</li>
+            <li>Provide and operate the RateMyCafe Service.</li>
             <li>Display your reviews and ratings on the platform.</li>
             <li>
               Communicate with you regarding your account and the Service.

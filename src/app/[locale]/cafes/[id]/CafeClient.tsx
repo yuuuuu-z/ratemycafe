@@ -41,6 +41,14 @@ import {
   DialogClose,
 } from "@/components/ui/dialog";
 import { Skeleton } from "@/components/ui/skeleton";
+import SocialShareButton from "@/components/SocialShareButton";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 type Cafe = {
   id: string;
@@ -225,12 +233,20 @@ export default function CafeClient({ cafe }: CafeClientProps) {
 
           <div className="flex flex-col">
             <div>
-              <div className="text-4xl font-bold flex items-center gap-2">
-                {localCafe.name}
-                <Badge className="bg-blue-500 text-white dark:bg-blue-600 mt-2">
-                  <BadgeCheckIcon /> Verified
-                </Badge>
+              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
+                <div className="text-3xl sm:text-4xl font-bold flex flex-wrap items-center gap-2">
+                  {localCafe.name}
+                  <Badge className="bg-blue-500 text-white dark:bg-blue-600 mt-1 sm:mt-2 flex items-center gap-1">
+                    <BadgeCheckIcon className="w-4 h-4" /> Verified
+                  </Badge>
+                </div>
+
+                {/* Share Button */}
+                <div className="self-start sm:self-auto">
+                  <SocialShareButton cafeName={localCafe.name} />
+                </div>
               </div>
+
               <div className="text-lg mt-2 flex items-center gap-2">
                 <MapPinned size={15} color="green" /> {localCafe.location}
                 <Badge variant="outline">
@@ -258,18 +274,89 @@ export default function CafeClient({ cafe }: CafeClientProps) {
             <h2 className="text-3xl font-bold">{c("review")}</h2>
 
             <div className="flex-wrap space-x-3 space-y-3 gap-3">
-              <Badge className="bg-purple-200/70 text-purple-800 px-3 py-1.5 text-sm font-medium rounded-full shadow-sm">
-                🍵 {c("taste")}
-              </Badge>
-              <Badge className="bg-blue-200/70 text-blue-800 px-3 py-1.5 text-sm font-medium rounded-full shadow-sm">
-                💻 {c("productivity")}
-              </Badge>
-              <Badge className="bg-green-200/70 text-green-800 px-3 py-1.5 text-sm font-medium rounded-full shadow-sm">
-                🌿 {c("environment")}
-              </Badge>
-              <Badge className="bg-red-200/70 text-red-800 px-3 py-1.5 text-sm font-medium rounded-full shadow-sm">
-                💰 {c("price")}
-              </Badge>
+              {/* Taste Badge */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Badge className="cursor-pointer bg-purple-200/70 text-purple-800 px-3 py-1.5 text-sm font-medium rounded-full shadow-sm">
+                    🍵 {c("taste")}
+                  </Badge>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent
+                  side="top"
+                  align="center"
+                  className="flex items-center justify-center gap-5 p-2 rounded-full bg-purple-200/70 "
+                >
+                  <DropdownMenuItem className="p-1 text-lg leading-none">
+                    👍
+                  </DropdownMenuItem>
+                  <DropdownMenuItem className="p-1 text-lg leading-none">
+                    👎
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+
+              {/* Productivity Badge */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Badge className="cursor-pointer bg-blue-200/70 text-blue-800 px-3 py-1.5 text-sm font-medium rounded-full shadow-sm">
+                    💻 {c("productivity")}
+                  </Badge>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent
+                  side="top"
+                  align="center"
+                  className="flex items-center justify-center gap-5 p-2 rounded-full bg-blue-200/70 "
+                >
+                  <DropdownMenuItem className="p-1 text-lg leading-none">
+                    👍
+                  </DropdownMenuItem>
+                  <DropdownMenuItem className="p-1 text-lg leading-none">
+                    👎
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+
+              {/* Environment Badge */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Badge className="cursor-pointer bg-green-200/70 text-green-800 px-3 py-1.5 text-sm font-medium rounded-full shadow-sm">
+                    🌿 {c("environment")}
+                  </Badge>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent
+                  side="top"
+                  align="center"
+                  className="flex items-center justify-center gap-5 p-2 rounded-full bg-green-200/70 "
+                >
+                  <DropdownMenuItem className="p-1 text-lg leading-none">
+                    👍
+                  </DropdownMenuItem>
+                  <DropdownMenuItem className="p-1 text-lg leading-none">
+                    👎
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+
+              {/* Price Badge */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Badge className="cursor-pointer bg-red-200/70 text-red-800 px-3 py-1.5 text-sm font-medium rounded-full shadow-sm">
+                    💰 {c("price")}
+                  </Badge>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent
+                  side="top"
+                  align="center"
+                  className="flex items-center justify-center gap-5 p-2 rounded-full bg-red-200/70   "
+                >
+                  <DropdownMenuItem className="p-1 text-lg leading-none">
+                    👍
+                  </DropdownMenuItem>
+                  <DropdownMenuItem className="p-1 text-lg leading-none">
+                    👎
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           </div>
 
@@ -312,7 +399,7 @@ export default function CafeClient({ cafe }: CafeClientProps) {
             </div>
           </div>
 
-          <div className="my-20">
+          <div className=" my-20">
             <ReviewForm
               cafeId={id}
               onReviewSubmitted={(newReview) => {

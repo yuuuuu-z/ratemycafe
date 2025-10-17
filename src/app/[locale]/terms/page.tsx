@@ -16,8 +16,8 @@ export default function page() {
       <h2 className="text-2xl font-semibold mb-3">1. Introduction</h2>
       <p className="mb-4">
         Welcome to RateMyCafe! These Terms of Service (Terms) govern your access
-        to and use of the CafeRater website and services (Service). By accessing
-        or using the Service, you agree to be bound by these Terms.
+        to and use of the RateMyCafe website and services (Service). By
+        accessing or using the Service, you agree to be bound by these Terms.
       </p>
 
       <h2 className="text-2xl font-semibold mb-3">2. User Obligations</h2>
@@ -45,7 +45,7 @@ export default function page() {
       <p className="mb-4">
         You retain all ownership rights to the reviews, ratings, and content you
         post on the Service (User Content). However, by submitting User Content,
-        you grant CafeRater a worldwide, non-exclusive, royalty-free license to
+        you grant RateMyCafe a worldwide, non-exclusive, royalty-free license to
         use, reproduce, modify, display, and distribute your User Content in
         connection with the Service and its promotion.
       </p>
@@ -70,7 +70,7 @@ export default function page() {
       </h2>
       <p className="mb-4">
         The Service is provided as is and as available without any warranties of
-        any kind. CafeRater does not guarantee that the Service will be
+        any kind. RateMyCafe does not guarantee that the Service will be
         uninterrupted, error-free, or secure. Your use of the Service is at your
         sole risk.
       </p>
@@ -79,14 +79,14 @@ export default function page() {
         6. Limitation of Liability
       </h2>
       <p className="mb-4">
-        CafeRater will not be liable for any indirect, incidental, special, or
+        RateMyCafe will not be liable for any indirect, incidental, special, or
         consequential damages resulting from your use of the Service, even if we
         have been advised of the possibility of such damages.
       </p>
 
       <h2 className="text-2xl font-semibold mb-3">7. Termination</h2>
       <p className="mb-4">
-        CafeRater reserves the right to suspend or terminate your account and
+        RateMyCafe reserves the right to suspend or terminate your account and
         access to the Service at our sole discretion, without notice, for any
         reason, including a breach of these Terms.
       </p>

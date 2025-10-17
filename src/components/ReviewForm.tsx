@@ -112,6 +112,7 @@ export const ReviewForm = ({ cafeId, onReviewSubmitted }: ReviewFormProps) => {
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
       <h3 className="text-xl font-semibold">{c("leaveReview")}</h3>
+
       <div className="flex items-center gap-2">
         <div className="flex items-center gap-1">
           {[1, 2, 3, 4, 5].map((starValue) => (
